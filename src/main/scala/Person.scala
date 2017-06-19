@@ -4,7 +4,6 @@
 abstract class Person {
   val id: String
   val name: String
-
 }
 
 class Customer(val id: String, val name: String) extends Person {
