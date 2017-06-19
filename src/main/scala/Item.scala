@@ -1,7 +1,7 @@
 /**
   * Created by Administrator on 19/06/2017.
   */
-class Item (var availableDate:String, var name:String, var cost:Double,var points:Int, var itemType:String){
+class Item (var availableDate:String, var name:String, var cost:Double, var itemType:String){
   private val id = Item.nextID()
 
 
@@ -9,11 +9,15 @@ class Item (var availableDate:String, var name:String, var cost:Double,var point
 
     private var idSequence = 0
 
-    private def nextID() = {
+     def nextID() = {
       idSequence += 1
       idSequence
     }
 
   }
+  def main(args: Array[String]): Unit = {
+
+  }
+
 }
 
