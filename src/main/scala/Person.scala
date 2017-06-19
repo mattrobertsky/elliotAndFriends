@@ -5,3 +5,7 @@ abstract class Person {
   val id: String
   val name: String
 }
+
+class Customer extends Person {
+  val rewardPoints: Int
+}
