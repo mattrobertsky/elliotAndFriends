@@ -6,4 +6,4 @@ abstract class Person {
   val name: String
 }
 
-//change by Jack
+//changes by Jack
