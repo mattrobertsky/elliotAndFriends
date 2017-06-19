@@ -6,4 +6,3 @@ abstract class Person {
   val name: String
 }
 
-//change by jack
