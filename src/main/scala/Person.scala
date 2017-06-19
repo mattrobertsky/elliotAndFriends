@@ -8,4 +8,4 @@ abstract class Person {
 
 class Customer extends Person {
   val rewardPoints: Int
-}//test
+}//
