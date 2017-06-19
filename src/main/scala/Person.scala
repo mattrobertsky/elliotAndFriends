@@ -4,9 +4,10 @@
 abstract class Person {
   val id: String
   val name: String
-  ///sdmsodfs
+
 }
 
-class Customer extends Person {
-  val rewardPoints: Int
-}//test
+class Customer(val id: String, val name: String) extends Person {
+
+  var rewardPoints: Int = 0
+}
