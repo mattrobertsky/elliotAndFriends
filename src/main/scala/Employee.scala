@@ -3,6 +3,5 @@
   */
 class Employee(id:String, name:String, isManager:Boolean) extends Person(id, name)
 {
-  // code here
 
 }
