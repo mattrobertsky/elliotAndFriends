@@ -8,4 +8,6 @@ class StoreTestSuite extends FunSuite {
 
   val store: Store = new Store
 
+  // demo comment
+
 }
