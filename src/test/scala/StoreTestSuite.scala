@@ -6,5 +6,6 @@ import org.scalatest.junit.JUnitRunner
 class StoreTestSuite extends FunSuite {
   // put some tests in here
   // extra
+  val store: Store = new Store
 
 }
