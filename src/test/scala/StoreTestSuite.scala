@@ -27,7 +27,6 @@ class StoreTestSuite extends FunSuite {
     assert(employee.name == "someName")
     assert(employee.getClass.getName == "Employee")
   }
-//  import Main.countChange
 //  test("countChange: example given in instructions") {
 //    assert(countChange(4,List(1,2)) === 3)
 //  }
