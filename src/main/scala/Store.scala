@@ -8,8 +8,8 @@ class Store {
   var dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
   var itemsMap: Map[String, Item] = Map[String, Item]().empty
   var personMap: Map[String, Person] = Map[String, Person]().empty
-  final val pathToPersons: String = "../resources/persons.txt"
-  final val pathToItems: String = "../resources/itemList.txt"
+  final val pathToPersons: String = ".../resources/persons.txt"
+  final val pathToItems: String = new java.io.File(".").getCanonicalPath + "/src/main/resources/itemList.txt"
 
 
 
@@ -25,7 +25,7 @@ class Store {
 
   def addItem(item: Item): Unit ={
     //itemsMap += 'I' -> item
-    //TO DO - ADD INDIVIDUAL ITEMS dsfsdsd
+    //TO DO - ADD I NDIVIDUAL ITEMS dsfsdsd
   }
 
   def updateItem(name: String,update:Any):Unit= {
@@ -35,7 +35,7 @@ class Store {
       case newQuantity: Int => item.quantity = newQuantity
       case newCost: Double => item.cost = newCost
       case newDate: java.util.Date => item.availableDate = newDate
-      case _ => println("You can either update the Name:String,Quantity:Int,Cost:Double,releseDate:yyyy-mm-dd. Please Try Again using those format")
+      case _ => println("You can either update the Name:String,Quantity:Int,Cost:Double,releaseDate:yyyy-mm-dd. Please Try Again using those format")
     }
   }
 
@@ -64,7 +64,6 @@ class Store {
       itemsMap.keys.foreach{items => if(itemsMap(items).name.equals(name)){ r = items }}
       getItemByID(r)
     }
-
 
 }
 
