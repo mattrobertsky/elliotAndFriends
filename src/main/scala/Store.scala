@@ -2,6 +2,7 @@
   * Created by matt on 19/06/17.
   */
 import scala.io.Source
+import scala.collection.mutable
 
 class Store {
 
@@ -34,6 +35,13 @@ class Store {
     personMap(employee.id) = employee
     employee
   }
+
+  def createCustomer(someId: String, someName: String): Customer =  {
+    val customer = new Customer(someId, someName)
+    personMap(customer.id) = customer
+    customer
+  }
+
   def readItems(): Unit ={
     for(line <- Source.fromFile(pathToItems).getLines){
       println(line)
@@ -86,11 +94,6 @@ class Store {
 }
 
 
-  def createCustomer(someId: String, someName: String): Customer =  {
-    val customer = new Customer(someId, someName)
-    personMap(customer.id) = customer
-    customer
-  }
 
 
 }
