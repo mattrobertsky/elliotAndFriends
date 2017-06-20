@@ -13,7 +13,7 @@ class Store {
   final val pathToPersons: String = new java.io.File(".").getCanonicalPath + "/src/main/resources/persons.txt"
   final val pathToItems: String = "../resources/itemList.txt"
 
-  //ffs
+
 
   def tallyDayEarnings(date: java.util.Date): Int = {
     var total = 0
@@ -28,22 +28,22 @@ class Store {
       val args = line.split(",")
       println(args)
       if (args(0) == "customer") {
-        createCustomer(args(1), args(2))
+        createCustomer(args(1))
       } else {
         val isManager: Boolean = args(3) == "TRUE"
-        createEmployee(args(1), args(2), isManager)
+        createEmployee(args(1), isManager)
       }
     }
   }
 
-  def createEmployee(someId: String, someName: String, isManager: Boolean): Employee =  {
-    val employee = new Employee(someId, someName, isManager)
+  def createEmployee(someName: String, isManager: Boolean): Employee =  {
+    val employee = new Employee(someName, isManager)
     personMap(employee.id) = employee
     employee
   }
 
-  def createCustomer(someId: String, someName: String): Customer =  {
-    val customer = new Customer(someId, someName)
+  def createCustomer(someName: String): Customer =  {
+    val customer = new Customer(someName)
     personMap(customer.id) = customer
     customer
   }
@@ -111,6 +111,6 @@ class Store {
     }
 
 
-  
+
 
 }
