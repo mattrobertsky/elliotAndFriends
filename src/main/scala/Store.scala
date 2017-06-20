@@ -23,7 +23,13 @@ class Store {
     }
   }
 
-  def updateItem(item: Item,update:Any):Unit= {
+  def addItem(item: Item): Unit ={
+    //itemsMap += 'I' -> item
+    //TO DO - ADD INDIVIDUAL ITEMS
+  }
+
+  def updateItem(name: String,update:Any):Unit= {
+    val item = getItemByName(name)
     update match {
       case newName: String => item.name = newName
       case newQuantity: Int => item.quantity = newQuantity
@@ -33,12 +39,12 @@ class Store {
     }
   }
 
-    def addStock(item: Item, amount: Int): Unit = {
-      item.quantity+= amount
+    def addStock(name: String, amount: Int): Unit = {
+      getItemByName(name).quantity += amount
     }
 
-    def removeStock(item: Item, amount: Int): Unit = {
-      item.quantity-= amount
+    def removeStock(name: String, amount: Int): Unit = {
+      getItemByName(name).quantity -= amount
     }
 
     def deleteItemByID(id: String): Unit ={
@@ -53,8 +59,10 @@ class Store {
       itemsMap(id)
     }
 
-    def getItemByName(name: String): Unit = {
-      itemsMap.keys.foreach{items => if(itemsMap(items).name.equals(name)) getItemByID(items)}
+    def getItemByName(name: String): Item = {
+      var r = ""
+      itemsMap.keys.foreach{items => if(itemsMap(items).name.equals(name)){ r = items }}
+      getItemByID(r)
     }
 
 

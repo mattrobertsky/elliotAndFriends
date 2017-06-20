@@ -4,9 +4,8 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class StoreTestSuite extends FunSuite {
-
-
   val store: Store = new Store
+  store.readItems()
 
   test("store.readPersons: create some Persons from a file") {
     store.readPersons()
@@ -28,40 +27,37 @@ class StoreTestSuite extends FunSuite {
     assert(employee.getClass.getName == "Employee")
   }
   test("Store.readItems: create some Items from a file") {
-    store.readItems()
-    assert(store.itemsMap.size == 10)
-    assert(store.itemsMap.contains("ItemID") == 1)
-
+    assert(store.itemsMap.nonEmpty)
   }
 
   test("Store.updateItems: update Items from a file") {
+    store.updateItem("Monster Hunter", 50.00)
+    store.updateItem("Monster Hunter", 200)
+    store.updateItem("Monster Hunter", 2019-6-11)
+    store.updateItem("Monster Hunter", "Monster-Hunter-Remastered")
 
-    assert(store.itemsMap.updateItem(itemID,10) )
-    assert(store.itemsMap.key(ItemID) == 10)
-
+    assert(store.getItemByName("Monster-Hunter-Remastered").quantity == 200)
+    // assert(store.getItemByName("Monster-Hunter-Remastered").availableDate.after(2019-6-11))
+    //FIX DATE
+    assert(store.getItemByName("Monster-Hunter-Remastered").cost == 50.00)
   }
 
   test("Store.deleteItems: deletes Items from a file") {
-
-    assert(store.itemsMap.deleteItem(itemID) )
-    assert(store.itemsMap.contains(ItemID))
-
+    store.deleteItemByID("itemID")
+    assert(store.itemsMap.contains("itemID"))
   }
-  test("Store.addStock: adds items to the Map ") {
 
-    assert(store.itemsMap.addItem(item,quantity) )
-    assert(store.itemsMap.contains(item))
+  test("Store.addStock: adds items to the Map ") {
+    val original = store.getItemByName("Monster Hunter").quantity
+    store.addStock("Monster Hunter", 100)
+    assert(store.getItemByName("Monster Hunter").quantity == original+100)
 
   }
   test("Store.removeStock: removes x quantity from item") {
-
-    assert(store.itemsMap.removeStock(Item,10) )
-    assert(store.itemsMap.key(value.quantity) == 0)
-
+    val original = store.getItemByName("Monster Hunter").quantity
+    store.removeStock("Monster Hunter", 100)
+    assert(store.getItemByName("Monster Hunter").quantity == original-100)
   }
-
-
-  // some comment
 
 
 }
