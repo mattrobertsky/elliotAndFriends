@@ -70,9 +70,6 @@ class Store {
     }
     }
 
-
-
-
     def updateItem(name: String,update:Any):Unit= {
     val item = getItemByName(name)
     update match {
