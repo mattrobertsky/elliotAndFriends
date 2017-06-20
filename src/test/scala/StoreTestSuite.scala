@@ -16,22 +16,23 @@ class StoreTestSuite extends FunSuite {
   }
 
   test("store.createEmployee: create one manager using the constructor") {
-    val manager: Employee = store.createEmployee("someId", "someName", true)
+    val manager: Employee = store.createEmployee("someName", true)
     assert(manager.id == "someId")
     assert(manager.name == "someName")
     assert(manager.isManager)
   }
   test("store.createEmployee: create one regular old employee using the constructor") {
-    val employee: Employee = store.createEmployee("someId", "someName", false)
+    val employee: Employee = store.createEmployee("someName", false)
     assert(employee.id == "someId")
     assert(employee.name == "someName")
     assert(!employee.isManager)
   }
   test("store.customer: create one customer using the constructor") {
-    val customer: Customer = store.createCustomer("someId", "someName")
+    val customer: Customer = store.createCustomer("someName")
     assert(customer.id == "someId")
     assert(customer.name == "someName")
     assert(customer.rewardPoints == 0)
+  }
   test("Store.readItems: create some Items from a file") {
     assert(store.itemsMap.nonEmpty)
   }
@@ -47,36 +48,36 @@ class StoreTestSuite extends FunSuite {
     //FIX DATE
     assert(store.getItemByName("Monster-Hunter-Remastered").cost == 50.00)
   }
-  test("Store.sellItem: Sell item from store"){
-    store.readItems()
-    assert(store.itemsMap.contains("ItemID") == 2)
-    asserts(store.itemsMap.key.quantity > 0)
-    assert(var original = store.itemMap.key.quantity)
-    assert(store.itemMap.key(2).removeStock(1))
-    assert(store.itemMap.key.quantity == original-1)
-
-    test("Store.deleteItems: deletes Items from a file") {
-      store.deleteItemByID("itemID")
-      assert(store.itemsMap.contains("itemID"))
-    }
-
-    test("Store.addStock: adds items to the Map ") {
-      val original = store.getItemByName("Monster Hunter").quantity
-      store.addStock("Monster Hunter", 100)
-      assert(store.getItemByName("Monster Hunter").quantity == original+100)
-
-    }
-    test("Store.removeStock: removes x quantity from item") {
-      val original = store.getItemByName("Monster Hunter").quantity
-      store.removeStock("Monster Hunter", 100)
-      assert(store.getItemByName("Monster Hunter").quantity == original-100)
-    }
-
-  test("Store.tallyDay: tally all transactions of the day")
-  {
-    val r1: RecieptItems = ("item1", 100.0, false)
-    val r2: RecieptItems = ("item2", 150.0, false)
-    val r3: ReceiptItems = ("item3", 250.0, true)
+//  test("Store.sellItem: Sell item from store"){
+//    store.readItems()
+//    assert(store.itemsMap.contains("ItemID") == 2)
+//    assert(store.itemsMap.key.quantity > 0)
+//    assert(var original = store.itemMap.key.quantity)
+//    assert(store.itemMap.key(2).removeStock(1))
+//    assert(store.itemMap.key.quantity == original-1)
+//
+//    test("Store.deleteItems: deletes Items from a file") {
+//      store.deleteItemByID("itemID")
+//      assert(store.itemsMap.contains("itemID"))
+//    }
+//
+//    test("Store.addStock: adds items to the Map ") {
+//      val original = store.getItemByName("Monster Hunter").quantity
+//      store.addStock("Monster Hunter", 100)
+//      assert(store.getItemByName("Monster Hunter").quantity == original+100)
+//
+//    }
+//    test("Store.removeStock: removes x quantity from item") {
+//      val original = store.getItemByName("Monster Hunter").quantity
+//      store.removeStock("Monster Hunter", 100)
+//      assert(store.getItemByName("Monster Hunter").quantity == original-100)
+//    }
+//
+//  test("Store.tallyDay: tally all transactions of the day")
+//  {
+//    val r1: RecieptItems = ("item1", 100.0, false)
+//    val r2: RecieptItems = ("item2", 150.0, false)
+//    val r3: ReceiptItems = ("item3", 250.0, true)
 
 //  test("Store.tallyDay: tally all transactions of the day")
 //  {
