@@ -14,7 +14,6 @@ class Store {
 
   val readmeText : Iterator[String] = Source.fromResource("persons.txt").getLines
 
-
   def readPersons(): Unit = {
     println("in readPersons " + pathToPersons)
     for (line <- Source.fromFile(pathToPersons).getLines) {
