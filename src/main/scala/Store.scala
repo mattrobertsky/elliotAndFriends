@@ -15,8 +15,8 @@ class Store {
 
 
 
-  def tallyDayEarnings(date: java.util.Date): Int = {
-    var total = 0
+  def tallyDayEarnings(date: java.util.Date): Double = {
+    var total = 0.0
     dayReceiptMap.foreach(reciept => if(reciept._1.equals(date)){total += reciept._2.total})
     total
   }
@@ -30,7 +30,7 @@ class Store {
       if (args(0) == "customer") {
         createCustomer(args(1))
       } else {
-        val isManager: Boolean = args(3) == "TRUE"
+        val isManager: Boolean = args(2) == "TRUE"
         createEmployee(args(1), isManager)
       }
     }
