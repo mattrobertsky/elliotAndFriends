@@ -1,3 +1,4 @@
+import scala.collection.mutable
 import scala.io.Source
 /**
   * Created by matt on 19/06/17.
@@ -7,30 +8,38 @@ class Store {
   val dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
   val stockMap: Map[String, String] = Map[String, String]().empty
   val itemsMap: Map[String, Item] = Map[String, Item]().empty
-  val personMap: Map[String, Person] = Map[String, Person]().empty
-  final val pathToPersons: String = "../resources/persons.txt"
+  var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
+  final val pathToPersons: String = new java.io.File(".").getCanonicalPath + "/src/main/resources/persons.txt"
 
 
-
+  val readmeText : Iterator[String] = Source.fromResource("persons.txt").getLines
 
 
   def readPersons(): Unit = {
-    println("in readPersons")
-    val f = Source.fromFile(pathToPersons)
+    println("in readPersons " + pathToPersons)
     for (line <- Source.fromFile(pathToPersons).getLines) {
       println(line)
-//      val cw = line.split(" ")(0).toInt
-//      val tmp = line.split(" ")(1).toInt
-//      listOfPlaces += new PlaceAtTable(cw, tmp)
+      val args = line.split(",")
+      println(args)
+      if (args(0) == "customer") {
+        createCustomer(args(1), args(2))
+      } else {
+        val isManager: Boolean = args(3) == "TRUE"
+        createEmployee(args(1), args(2), isManager)
+      }
     }
   }
 
   def createEmployee(someId: String, someName: String, isManager: Boolean): Employee =  {
-    new Employee(someId, someName, isManager)
+    val employee = new Employee(someId, someName, isManager)
+    personMap(employee.id) = employee
+    employee
   }
 
   def createCustomer(someId: String, someName: String): Customer =  {
-    new Customer(someId, someName)
+    val customer = new Customer(someId, someName)
+    personMap(customer.id) = customer
+    customer
   }
 
 
