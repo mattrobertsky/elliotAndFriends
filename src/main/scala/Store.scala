@@ -11,7 +11,7 @@ class Store {
   val itemsMap: Map[String, Item] = Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
   final val pathToPersons: String = new java.io.File(".").getCanonicalPath + "/src/main/resources/persons.txt"
-  final val pathToItems: String = "../resources/itemList.txt"
+  final val pathToItems: String =  new java.io.File(".").getCanonicalPath + "/src/main/resources/itemList.txt"
 
 
 
