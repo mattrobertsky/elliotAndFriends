@@ -29,10 +29,37 @@ class StoreTestSuite extends FunSuite {
   }
   test("Store.readItems: create some Items from a file") {
     store.readItems()
-    assert(store.itemsMap.size == 1)
+    assert(store.itemsMap.size == 10)
     assert(store.itemsMap.contains("ItemID") == 1)
 
   }
+
+  test("Store.updateItems: update Items from a file") {
+
+    assert(store.itemsMap.updateItem(itemID,10) )
+    assert(store.itemsMap.key(ItemID) == 10)
+
+  }
+
+  test("Store.deleteItems: deletes Items from a file") {
+
+    assert(store.itemsMap.deleteItem(itemID) )
+    assert(store.itemsMap.contains(ItemID))
+
+  }
+  test("Store.addStock: adds items to the Map ") {
+
+    assert(store.itemsMap.addItem(item,quantity) )
+    assert(store.itemsMap.contains(item))
+
+  }
+  test("Store.removeStock: removes x quantity from item") {
+
+    assert(store.itemsMap.removeStock(Item,10) )
+    assert(store.itemsMap.key(value.quantity) == 0)
+
+  }
+
 
   // some comment
 
