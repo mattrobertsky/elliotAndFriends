@@ -1,3 +1,4 @@
+import scala.io.Source
 /**
   * Created by matt on 19/06/17.
   */
@@ -11,8 +12,26 @@ class Store {
 
 
 
+
+
   def readPersons(): Unit = {
-//    file open pathToPersons
+    println("in readPersons")
+    val f = Source.fromFile(pathToPersons)
+    for (line <- Source.fromFile(pathToPersons).getLines) {
+      println(line)
+//      val cw = line.split(" ")(0).toInt
+//      val tmp = line.split(" ")(1).toInt
+//      listOfPlaces += new PlaceAtTable(cw, tmp)
+    }
   }
+
+  def createEmployee(someId: String, someName: String, isManager: Boolean): Employee =  {
+    new Employee(someId, someName, isManager)
+  }
+
+  def createCustomer(someId: String, someName: String): Customer =  {
+    new Customer(someId, someName)
+  }
+
 
 }
