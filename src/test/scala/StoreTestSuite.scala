@@ -34,5 +34,7 @@ class StoreTestSuite extends FunSuite {
 
   }
 
+  // some comment
+
 
 }
