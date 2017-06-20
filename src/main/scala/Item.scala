@@ -7,11 +7,5 @@ class Item (var availableDate:java.util.Date, var name:String, var cost:Double, 
 
 
 
-
-
-
-
-
-
 }
 
