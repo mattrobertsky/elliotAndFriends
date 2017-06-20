@@ -4,8 +4,15 @@
 class Store {
 
   val dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
-  val stockMap: Map[Int, Int] = Map[Int, Int]().empty
-  val itemsMap: Map[Int, Item] = Map[Int, Item]().empty
-  val personMap: Map[Int, Person] = Map[Int, Person]().empty
+  val stockMap: Map[String, String] = Map[String, String]().empty
+  val itemsMap: Map[String, Item] = Map[String, Item]().empty
+  val personMap: Map[String, Person] = Map[String, Person]().empty
+  final val pathToPersons: String = "../resources/persons.txt"
+
+
+
+  def readPersons(): Unit = {
+//    file open pathToPersons
+  }
 
 }
