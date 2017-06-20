@@ -2,19 +2,44 @@
   * Created by matt on 19/06/17.
   */
 import scala.io.Source
+import scala.collection.mutable
 
 class Store {
 
-  var dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
-  var itemsMap: Map[String, Item] = Map[String, Item]().empty
-  var personMap: Map[String, Person] = Map[String, Person]().empty
-  final val pathToPersons: String = ".../resources/persons.txt"
-  final val pathToItems: String = new java.io.File(".").getCanonicalPath + "/src/main/resources/itemList.txt"
+  val dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
+  val stockMap: Map[String, String] = Map[String, String]().empty
+  val itemsMap: Map[String, Item] = Map[String, Item]().empty
+  var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
+  final val pathToPersons: String = new java.io.File(".").getCanonicalPath + "/src/main/resources/persons.txt"
+  final val pathToItems: String = "../resources/itemList.txt"
 
 
 
   def readPersons(): Unit = {
+    println("in readPersons " + pathToPersons)
+    for (line <- Source.fromFile(pathToPersons).getLines) {
+      println(line)
+      val args = line.split(",")
+      println(args)
+      if (args(0) == "customer") {
+        createCustomer(args(1), args(2))
+      } else {
+        val isManager: Boolean = args(3) == "TRUE"
+        createEmployee(args(1), args(2), isManager)
+      }
+    }
+  }
 
+  def createEmployee(someId: String, someName: String, isManager: Boolean): Employee =  {
+    val employee = new Employee(someId, someName, isManager)
+    personMap(employee.id) = employee
+    employee
+  }
+
+  def createCustomer(someId: String, someName: String): Customer =  {
+    val customer = new Customer(someId, someName)
+    personMap(customer.id) = customer
+    customer
   }
 
   def readItems(): Unit ={
@@ -25,7 +50,7 @@ class Store {
 
   def addItem(item: Item): Unit ={
     //itemsMap += 'I' -> item
-    //TO DO - ADD I NDIVIDUAL ITEMS dsfsdsd
+    //TO DO - ADD INDIVIDUAL ITEMS dsfsdsd
   }
 
   def updateItem(name: String,update:Any):Unit= {
@@ -35,7 +60,7 @@ class Store {
       case newQuantity: Int => item.quantity = newQuantity
       case newCost: Double => item.cost = newCost
       case newDate: java.util.Date => item.availableDate = newDate
-      case _ => println("You can either update the Name:String,Quantity:Int,Cost:Double,releaseDate:yyyy-mm-dd. Please Try Again using those format")
+      case _ => println("You can either update the Name:String,Quantity:Int,Cost:Double,releseDate:yyyy-mm-dd. Please Try Again using those format")
     }
   }
 
@@ -64,6 +89,7 @@ class Store {
       itemsMap.keys.foreach{items => if(itemsMap(items).name.equals(name)){ r = items }}
       getItemByID(r)
     }
+
 
 }
 

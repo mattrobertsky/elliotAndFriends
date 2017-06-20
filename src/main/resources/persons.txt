@@ -1,1 +1,3 @@
-this is for persons
+customer,CUS-1,Harry,FALSE
+employee,EMP-1,Tom,FALSE
+employee,EMP-2,Dick,TRUE
