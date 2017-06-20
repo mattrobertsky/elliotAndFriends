@@ -6,14 +6,20 @@ import scala.collection.mutable
 
 class Store {
 
-  val dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
-  val stockMap: Map[String, String] = Map[String, String]().empty
-  val itemsMap: Map[String, Item] = Map[String, Item]().empty
+  var dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
+  var stockMap: Map[String, String] = Map[String, String]().empty
+  var itemsMap: Map[String, Item] = Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
   final val pathToPersons: String = new java.io.File(".").getCanonicalPath + "/src/main/resources/persons.txt"
   final val pathToItems: String =  new java.io.File(".").getCanonicalPath + "/src/main/resources/itemList.txt"
 
 
+
+  def tallyDayEarnings(date: java.util.Date): Int = {
+    var total = 0
+    dayReceiptMap.foreach(reciept => if(reciept._1.equals(date)){total += reciept._2.total})
+    total
+  }
 
   def readPersons(): Unit = {
     println("in readPersons " + pathToPersons)
@@ -53,7 +59,18 @@ class Store {
     //TO DO - ADD INDIVIDUAL ITEMS dsfsdsd
   }
 
-  def updateItem(name: String,update:Any):Unit= {
+  //MAKE THIS METHOD TAKE CUSTOMER ID AND HAVE A TOTAL COST?
+  def sellItems(basket: List[Item]): Unit = {
+    for (x <- 0 until basket.size) {
+      if (basket(x).quantity > 0) {
+        basket(x).quantity -= 1
+      } else {
+        println("Item " + basket(x).name + " is out of stock")
+      }
+    }
+    }
+
+    def updateItem(name: String,update:Any):Unit= {
     val item = getItemByName(name)
     update match {
       case newName: String => item.name = newName
@@ -73,7 +90,7 @@ class Store {
     }
 
     def deleteItemByID(id: String): Unit ={
-//      itemsMap -= id
+      itemsMap -= id
     }
 
     def deleteItemByName(name: String): Unit = {
@@ -91,5 +108,6 @@ class Store {
     }
 
 
-}
 
+
+}
