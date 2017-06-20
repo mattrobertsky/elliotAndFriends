@@ -9,7 +9,7 @@ class Item (var availableDate:String, var name:String, var cost:Double, var item
 
     private var idSequence = 0
 
-    def nextID() = {
+     def nextID() = {
       idSequence += 1
       idSequence
     }
