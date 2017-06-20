@@ -8,6 +8,7 @@ class StoreTestSuite extends FunSuite {
   store.readPersons()
   store.readItems()
 
+
   test("store.readPersons: create some Persons from a file") {
     store.readPersons()
     assert(store.personMap.size == 3)
@@ -16,22 +17,40 @@ class StoreTestSuite extends FunSuite {
 
   test("store.createEmployee: create one manager using the constructor") {
     val manager: Employee = store.createEmployee("someName", true)
-    assert(manager.id == "someId")
     assert(manager.name == "someName")
     assert(manager.isManager)
   }
+
   test("store.createEmployee: create one regular old employee using the constructor") {
     val employee: Employee = store.createEmployee("someName", false)
-    assert(employee.id == "someId")
     assert(employee.name == "someName")
     assert(!employee.isManager)
   }
+
   test("store.customer: create one customer using the constructor") {
     val customer: Customer = store.createCustomer("someName")
-    assert(customer.id == "someId")
     assert(customer.name == "someName")
     assert(customer.rewardPoints == 0)
   }
+
+  test("store.deletePerson: create and delete a person") {
+    val deleteMe = store.createCustomer("foo")
+    store.deletePerson(deleteMe)
+    assert(!store.personMap.contains(deleteMe.id))
+  }
+
+  test("store.getPerson: retrieve a person from the memory") {
+    val getMe = store.createCustomer("Gary")
+    val gotMe = store.getPerson(getMe.id)
+    assert(getMe.id == gotMe.id)
+  }
+
+  test("store:updateCustomer: change a property of the customer") {
+    val original = store.createCustomer("Barry")
+//    val toUpdate: Customer = (Customer) store.getPerson(original.id)
+
+  }
+
   test("Store.readItems: create some Items from a file") {
     assert(store.itemsMap.nonEmpty)
   }

@@ -7,8 +7,7 @@ class Item (var availableDate: String, var name:String, var cost:Double, final v
   val id = nextId()
 
   override def nextId(): String = {
-    seq += 1
-    "ITM-" + seq
+    "ITM-" + IdAble.nextIndex()
   }
 
 
