@@ -4,8 +4,6 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class StoreTestSuite extends FunSuite {
-
-
   val store: Store = new Store
   store.readItems()
 
@@ -38,15 +36,15 @@ class StoreTestSuite extends FunSuite {
   }
 
   test("Store.updateItems: update Items from a file") {
-    store.updateItem("Monster Hunter", 50.00)
-    store.updateItem("Monster Hunter", 200)
-    store.updateItem("Monster Hunter", 2019-6-11)
-    store.updateItem("Monster Hunter", "Monster-Hunter-Remastered")
+    store.updateItemCost("Monster Hunter", 50.00)
+    store.updateItemQuantity("Monster Hunter", 200)
+    store.updateItemDate("Monster Hunter", "2019-6-11")
+    store.updateItemName("Monster Hunter", "Monster-Hunter-Remastered")
 
     assert(store.getItemByName("Monster-Hunter-Remastered").quantity == 200)
-    // assert(store.getItemByName("Monster-Hunter-Remastered").availableDate.after(2019-6-11))
-    //FIX DATE
     assert(store.getItemByName("Monster-Hunter-Remastered").cost == 50.00)
+    //assert(store.getItemByName("Monster-Hunter-Remastered").availableDate.after(2019-6-11))
+    //FIX DATE
   }
 
   test("Store.sellItem: Sell item from store") {
@@ -64,28 +62,22 @@ class StoreTestSuite extends FunSuite {
     store.sellItems(customerBasket)
     assert(store.getItemByName("Monster Hunter").quantity > 0)
   }
-//
-//    test("Store.deleteItems: deletes Items from a file") {
-//      store.deleteItemByID("itemID")
-//      assert(store.itemsMap.contains("itemID"))
-//    }
-//
-//    test("Store.addStock: adds items to the Map ") {
-//      val original = store.getItemByName("Monster Hunter").quantity
-//      store.addStock("Monster Hunter", 100)
-//      assert(store.getItemByName("Monster Hunter").quantity == original+100)
-//
-//    }
-//    test("Store.removeStock: removes x quantity from item") {
-//      val original = store.getItemByName("Monster Hunter").quantity
-//      store.removeStock("Monster Hunter", 100)
-//      assert(store.getItemByName("Monster Hunter").quantity == original-100)
-//    }
-//
-  // item, cost 0.0, isPreorder true/false
+    test("Store.deleteItems: deletes Items from a file") {
+      store.deleteItemByID("ITM1")
+      assert(!store.itemsMap.contains("ITM1"))
+    }
 
- // }
-  // some comment
+    test("Store.addStock: adds items to the Map ") {
+      val original = store.getItemByName("Monster Hunter").quantity
+      store.addStock("Monster Hunter", 100)
+      assert(store.getItemByName("Monster Hunter").quantity == original+100)
+    }
+    test("Store.removeStock: removes x quantity from item") {
+      val original = store.getItemByName("Monster Hunter").quantity
+      store.removeStock("Monster Hunter", 100)
+      assert(store.getItemByName("Monster Hunter").quantity == original-100)
+    }
 
+   //item, cost 0.0, isPreorder true/false
 
 }
