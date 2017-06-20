@@ -13,7 +13,7 @@ class Store {
   final val pathToPersons: String = new java.io.File(".").getCanonicalPath + "/src/main/resources/persons.txt"
   final val pathToItems: String = "../resources/itemList.txt"
 
-
+  //ffs
 
   def readPersons(): Unit = {
     println("in readPersons " + pathToPersons)
