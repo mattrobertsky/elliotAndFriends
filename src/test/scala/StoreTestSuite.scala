@@ -5,6 +5,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class StoreTestSuite extends FunSuite {
   val store: Store = new Store
+  store.readPersons()
   store.readItems()
 
   test("store.readPersons: create some Persons from a file") {
