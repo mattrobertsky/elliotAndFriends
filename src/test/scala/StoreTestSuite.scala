@@ -32,6 +32,7 @@ class StoreTestSuite extends FunSuite {
     assert(customer.id == "someId")
     assert(customer.name == "someName")
     assert(customer.rewardPoints == 0)
+  }
   test("Store.readItems: create some Items from a file") {
     assert(store.itemsMap.nonEmpty)
   }
@@ -47,13 +48,22 @@ class StoreTestSuite extends FunSuite {
     //FIX DATE
     assert(store.getItemByName("Monster-Hunter-Remastered").cost == 50.00)
   }
-  test("Store.sellItem: Sell item from store"){
-    store.readItems()
-    assert(store.itemsMap.contains("ItemID") == 2)
-    asserts(store.itemsMap.key.quantity > 0)
-    assert(var original = store.itemMap.key.quantity)
-    assert(store.itemMap.key(2).removeStock(1))
-    assert(store.itemMap.key.quantity == original-1)
+
+  test("Store.sellItem: Sell item from store") {
+    var customerBasket = List(store.getItemByName("Monster Hunter"),store.getItemByName("Lara-Croft"))
+    var originalM = store.getItemByName("Monster Hunter").quantity
+    var originalL = store.getItemByName("Lara-Croft").quantity
+    store.sellItems(customerBasket)
+    assert(store.getItemByName("Monster Hunter").quantity == originalM-1)
+    assert(store.getItemByName("Lara-Croft").quantity == originalL-1)
+  }
+
+  test("Store.sellItem: Sell  more items than are in stock") {
+    var customerBasket = List(store.getItemByName("Monster Hunter"))
+    store.getItemByName("Monster Hunter").quantity = 0
+    store.sellItems(customerBasket)
+    assert(store.getItemByName("Monster Hunter").quantity > 0)
+  }
 
   test("Store.deleteItems: deletes Items from a file") {
     store.deleteItemByID("itemID")
@@ -70,31 +80,6 @@ class StoreTestSuite extends FunSuite {
     val original = store.getItemByName("Monster Hunter").quantity
     store.removeStock("Monster Hunter", 100)
     assert(store.getItemByName("Monster Hunter").quantity == original-100)
-  }
-  }
-
-  test("Store.tallyDay: tally all transactions of the day")
-  {
-    val r1: RecieptItems = ("item1", 100.0, false)
-    val r2: RecieptItems = ("item2", 150.0, false)
-    val r3: ReceiptItems = ("item3", 250.0, true)
-
-    val reciept: Reciept = ("reciept1", "customer1", 0.0)
-    val reciept2: Reciept = ("reciept2", "customer2", 0.0)
-
-    assert(reciept.itemsList += r1)
-    assert(reciept.total += r1.cost)
-    assert(reciept.itemsList += r2)
-    assert(reciept.total += r3.cost)
-    assert(reciept.itemsList += r3)
-    assert(reciept.total += r3.cost)
-
-    assert(Store.tallyDay == 1000.0)
-
-
-
-      // item, cost 0.0, isPreorder true/false
-
   }
   // some comment
 
