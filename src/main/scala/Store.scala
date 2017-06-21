@@ -10,6 +10,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 class Store {
+
   var dayReceiptMap: Map[java.util.Date, ListBuffer[Reciept]] = Map[java.util.Date, ListBuffer[Reciept]]().empty
   var stockMap: Map[String, String] = Map[String, String]().empty
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
@@ -28,9 +29,17 @@ class Store {
     total
   }
 
-//  def tallyAllEarnings: Double = {
-//    dayReceiptMap.fl
-//  }
+  def tallyAllEarnings: Double = {
+    var total = 0.0
+    for (key <- dayReceiptMap.keys) {
+      total += tallyDayEarnings(key)
+    }
+    total
+  }
+
+  def forecastDaysEarnings: Double = {
+    tallyAllEarnings / dayReceiptMap.keys.size
+  }
 
   def init: Unit = {
     this.readPersons()
@@ -228,11 +237,19 @@ class Store {
     var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
     try {
       receiptsList = dayReceiptMap(this.today)
+      println("in try")
     } catch {
-      case e: NoSuchElementException => dayReceiptMap += (this.today -> receiptsList) // TODO refactor using Option
+      case e: NoSuchElementException => {
+        dayReceiptMap += (this.today -> receiptsList)
+        println("in catch")// TODO refactor using Option
+      }
+
     }
     receiptsList += reciept
-      //    dayReceiptMap += (today -> reciept)
+    println("receiptList size " + receiptsList.size)
+    dayReceiptMap += (this.today -> receiptsList)
+    println("dayReciptMap " + dayReceiptMap.mkString)
+//    dayReceiptMap += (today -> reciept)
     println(printReciept(reciept))
   }
 
@@ -249,6 +266,10 @@ class Store {
     var Date = new SimpleDateFormat("dd/MM/yyyy").parse(date);
     Date
   }
+}
 
-
+object Store {
+  def main(args: Array[String]): Unit = {
+    System.out.println("Please enter your employee id ...")
+  }
 }
