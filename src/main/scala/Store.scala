@@ -21,15 +21,16 @@ class Store {
 
   def tallyDayEarnings(date: java.util.Date): Double = {
     var total = 0.0
-
     val receipts: ListBuffer[Reciept] = dayReceiptMap(date)
     for (receipt <- receipts) {
       total += receipt.totalPrice
     }
-
-//    dayReceiptMap.foreach(reciept => if(reciept._1.equals(date)){total += reciept._2.totalPrice})
     total
   }
+
+//  def tallyAllEarnings: Double = {
+//    dayReceiptMap.fl
+//  }
 
   def init: Unit = {
     this.readPersons()
