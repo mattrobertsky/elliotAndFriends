@@ -112,19 +112,21 @@ def calcTotal(basket: List[Item]): Double = {
   total
 }
   def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
-  var newTotal = total
-    if (!usePoints ){
-    val pointsTotal = newTotal/10
-    updateCustomerPoints(custID,pointsTotal,true)
-  } else {
-    val customer:Customer = getPerson(custID).asInstanceOf[Customer]
-      if(customer.rewardPoints > newTotal){
-        updateCustomerPoints(custID,newTotal,false)
+    var newTotal = total
+    if (!usePoints) {
+      val pointsTotal = newTotal / 10
+      updateCustomerPoints(custID, pointsTotal, true)
+    } else {
+      val customer: Customer = getPerson(custID).asInstanceOf[Customer]
+      if (customer.rewardPoints > newTotal) {
+        updateCustomerPoints(custID, newTotal, false)
         newTotal = 0
-      }else{
+      } else {
         newTotal -= customer.rewardPoints
-        updateCustomerPoints(custID,customer.rewardPoints,false)
+        updateCustomerPoints(custID, customer.rewardPoints, false)
       }
+    }
+    newTotal
   }
 
     def updateItemName(name: String,update:String):Unit= {
