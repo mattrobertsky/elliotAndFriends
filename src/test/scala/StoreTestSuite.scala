@@ -96,7 +96,7 @@ class StoreTestSuite extends FunSuite {
     var customerBasket = List(store.getItemByName("Monster Hunter"))
     store.getItemByName("Monster Hunter").quantity = 0
     store.sellItems(customerBasket)
-    assert(store.getItemByName("Monster Hunter").quantity == 0)
+    assert(store.getItemByName("Monster Hunter").quantity > 0)
   }
     test("Store.deleteItems: deletes Items from a file") {
       store.deleteItemByID("ITM1")

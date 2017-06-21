@@ -8,8 +8,6 @@ import scala.io.Source
 import scala.collection.mutable
 
 class Store {
-
-
   var dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
   var stockMap: Map[String, String] = Map[String, String]().empty
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
@@ -27,11 +25,14 @@ class Store {
 
   def readPersons(): Unit = {
     for (line <- Source.fromFile(pathToPersons).getLines) {
+      println(line)
       val args = line.split(",")
+      println(args)
       if (args(0) == "customer") {
         createCustomer(args(1))
       } else {
-        createEmployee(args(1), args(2) == "TRUE")
+        val isManager: Boolean = args(2) == "TRUE"
+        createEmployee(args(1), isManager)
       }
     }
   }
@@ -47,13 +48,13 @@ class Store {
 
   def createEmployee(someName: String, isManager: Boolean): Employee =  {
     val employee = new Employee(someName, isManager)
-    personMap += (employee.id -> employee)
+    personMap(employee.id) = employee
     employee
   }
 
   def createCustomer(someName: String): Customer =  {
     val customer = new Customer(someName)
-    personMap += (customer.id -> customer)
+    personMap(customer.id) = customer
     customer
   }
 
