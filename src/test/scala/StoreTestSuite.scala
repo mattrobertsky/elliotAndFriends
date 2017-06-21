@@ -7,6 +7,26 @@ class StoreTestSuite extends FunSuite {
   val store: Store = new Store
   store.init
 
+  test("customer:addToBasket: test if we can add an Item to the basket") {
+    val item = store.getItemByName("Lara-Croft")
+    val customer = store.createCustomer("Cary")
+    assert(customer.basket.size == 0)
+    customer.addToBasket(item)
+    assert(customer.basket.size == 1)
+    assert(customer.basket.contains(item))
+    customer.emptyBasket
+    assert(customer.basket.size == 0)
+    assert(!customer.basket.contains(item))
+  }
+
+  test("store:tallyDayEarnings test the tally adds up correctly") {
+    val item = store.getItemByName("Lara-Croft")
+    val customer = store.createCustomer("Cary")
+    customer.addToBasket(item)
+    store.sellItems(customer.basket.toList, false, customer.id)
+    val tally = store.tallyDayEarnings(store.today)
+    assert(tally == 40.00)
+  }
 
   test("store.readPersons: create some Persons from a file") {
     store.readPersons()

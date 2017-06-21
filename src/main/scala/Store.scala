@@ -195,11 +195,11 @@ class Store {
     cal.set(Calendar.DATE, this.calendar.get(Calendar.DATE))
     cal.getTime
   }
+
   def addReciept(customerID:String, ItemList:List[Item], totalPrice:Double): Unit = {
     val reciept = new Reciept(customerID, ItemList, totalPrice)
-    dayReceiptMap += (now -> reciept)
+    dayReceiptMap += (today -> reciept)
     println(printReciept(reciept))
-
   }
 
   def printReciept(reciept:Reciept): String ={
