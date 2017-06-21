@@ -11,8 +11,11 @@ class Store {
   var stockMap: Map[String, String] = Map[String, String]().empty
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
-  final val pathToPersons: String = new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" +java.io.File.separator+"main"+java.io.File.separator+"resources"+java.io.File.separator+"persons.txt"
-  final val pathToItems: String =  new java.io.File(".").getCanonicalPath + "/src/main/resources/itemList.txt"
+  var currentUser: Option[Employee] = None
+
+  //C:\Users\Administrator\Desktop\Jack Temp\elliotAndFriends\src\main\resources
+  final val pathToPersons: String = new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "persons.txt"
+  final val pathToItems: String =  new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "itemList.txt"
 
   def tallyDayEarnings(date: java.util.Date): Double = {
     var total = 0.0
@@ -35,6 +38,14 @@ class Store {
     }
   }
 
+  def getPerson(personId: String) ={
+    personMap(personId)
+  }
+
+  def deletePerson(person: Person) = {
+    personMap.remove(person.id)
+  }
+
 
   def createEmployee(someName: String, isManager: Boolean): Employee =  {
     val employee = new Employee(someName, isManager)
@@ -46,6 +57,23 @@ class Store {
     val customer = new Customer(someName)
     personMap(customer.id) = customer
     customer
+  }
+
+  def updateCustomerPoints(id: String, points: Int, increment: Boolean): Unit ={
+    val customer: Customer = getPerson(id).asInstanceOf[Customer]
+    if(increment) {
+      customer.rewardPoints += points
+    } else {
+      customer.rewardPoints -= points
+    }
+  }
+
+  def login(employee: Employee) = {
+    currentUser = Option(employee)
+  }
+
+  def logout(employee: Employee) = {
+    currentUser = None
   }
 
   def createItem(availableDate:String, name:String, cost:Double, itemType:String, quantity:Int): Item ={
@@ -84,12 +112,33 @@ class Store {
     }
 
   //MAKE THIS METHOD TAKE CUSTOMER ID?
-  def sellItems(basket: List[Item]): Double = {
-    var total = 0.0
-    for (x <- 0 until basket.size) {
-      if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
-      } else {println("Item " + basket(x).name + " is out of stock")}}
-   total
+  def sellItems(basket: List[Item], usePoints: Boolean, custID: String): Unit = {
+    val total = calcTotal(basket).toInt
+    val points = calcPoints(total, custID, usePoints)
+  }
+def calcTotal(basket: List[Item]): Double = {
+  var total = 0.0
+  for (x <- 0 until basket.size) {
+    if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
+    } else {println("Item " + basket(x).name + " is out of stock")}}
+  total
+}
+  def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
+    var newTotal = total
+    if (!usePoints) {
+      val pointsTotal = newTotal / 10
+      updateCustomerPoints(custID, pointsTotal, true)
+    } else {
+      val customer: Customer = getPerson(custID).asInstanceOf[Customer]
+      if (customer.rewardPoints > newTotal) {
+        updateCustomerPoints(custID, newTotal, false)
+        newTotal = 0
+      } else {
+        newTotal -= customer.rewardPoints
+        updateCustomerPoints(custID, customer.rewardPoints, false)
+      }
+    }
+    newTotal
   }
 
     def updateItemName(name: String,update:String):Unit= {
@@ -114,12 +163,5 @@ class Store {
 
   def removeStock(name: String, amount: Int): Unit = {
     getItemByName(name).quantity -= amount
-  }
-
-  def main(args: Array[String]): Unit = {
-    val store = new Store
-    store.createItem("2018-1-1","Monster-Hunter",20.00,"Game",200)
-    println(store.itemsMap)
-
   }
 }

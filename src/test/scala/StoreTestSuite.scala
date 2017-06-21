@@ -5,41 +5,64 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class StoreTestSuite extends FunSuite {
   val store: Store = new Store
+  store.readPersons()
   store.readItems()
+
 
   test("store.readPersons: create some Persons from a file") {
     store.readPersons()
-    assert(store.personMap.size == 2)
     assert(store.personMap.contains("CUS-1"))
   }
 
   test("store.createEmployee: create one manager using the constructor") {
     val manager: Employee = store.createEmployee("someName", true)
-    assert(manager.id == "EMP-1")
     assert(manager.name == "someName")
     assert(manager.isManager)
   }
+
   test("store.createEmployee: create one regular old employee using the constructor") {
-    val employee: Employee = store.createEmployee("Hugh", false)
-    assert(employee.id == "EMP-1")
-    assert(employee.name == "Hugh")
+    val employee: Employee = store.createEmployee("someName", false)
+    assert(employee.name == "someName")
     assert(!employee.isManager)
   }
+
   test("store.customer: create one customer using the constructor") {
     val customer: Customer = store.createCustomer("someName")
-    assert(customer.id == "CUS-1")
     assert(customer.name == "someName")
     assert(customer.rewardPoints == 0)
   }
-  test("Store.readItems: create some Items from a file") {
-    assert(store.itemsMap.nonEmpty)
+
+  test("store.deletePerson: create and delete a person") {
+    val deleteMe = store.createCustomer("foo")
+    store.deletePerson(deleteMe)
+    assert(!store.personMap.contains(deleteMe.id))
   }
 
-  test("get item by values on Item Object"){
+  test("store.getPerson: retrieve a person from the memory") {
+    val getMe = store.createCustomer("Gary")
+    val gotMe = store.getPerson(getMe.id)
+    assert(getMe.id == gotMe.id)
+    store.deletePerson(getMe)
+  }
 
-    println(store.itemsMap)
+  test("store.updateCustomerPoints: change reward points of the customer") {
+    val original = store.createCustomer("Barry")
+    val originalPoints = original.rewardPoints
+    store.updateCustomerPoints(original.id, 10, true)
+    assert(originalPoints != original.rewardPoints)
+    store.deletePerson(original)
+  }
+  test("store.login: employee can loginto system") {
+    assert(!store.currentUser.isDefined)
+    val larry = store.createEmployee("Larry", true)
+    store.login(larry)
+    assert(store.currentUser.isDefined)
+    store.logout(larry)
+    store.deletePerson(larry)
+  }
 
-
+  test("Store.readItems: create some Items from a file") {
+    assert(store.itemsMap.nonEmpty)
   }
 
   test("Store.updateItems: update Items from a file") {
@@ -53,7 +76,6 @@ class StoreTestSuite extends FunSuite {
     //assert(store.getItemByName("Monster-Hunter-Remastered").availableDate.after(2019-6-11))
     //FIX DATE
   }
-
 
   test("Store.sellItem: Sell item from store") {
     var customerBasket = List(store.getItemByName("Monster Hunter"),store.getItemByName("Lara-Croft"))
@@ -85,7 +107,18 @@ class StoreTestSuite extends FunSuite {
       store.removeStock("Monster Hunter", 100)
       assert(store.getItemByName("Monster Hunter").quantity == original-100)
     }
+  test("Store.updateItems: update Items from a file") {
+    println(store.itemsMap.size)
+    store.updateItemCost("Monster Hunter", 50.00)
+    store.updateItemQuantity("Monster Hunter", 200)
+    store.updateItemDate("Monster Hunter", "2019-6-11")
+    store.updateItemName("Monster Hunter", "Monster-Hunter-Remastered")
 
+    assert(store.getItemByName("Monster-Hunter-Remastered").quantity == 200)
+    assert(store.getItemByName("Monster-Hunter-Remastered").cost == 50.00)
+    //assert(store.getItemByName("Monster-Hunter-Remastered").availableDate.after(2019-6-11))
+    //FIX DATE
+  }
    //item, cost 0.0, isPreorder true/false
 
 }
