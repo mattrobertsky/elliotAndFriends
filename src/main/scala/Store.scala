@@ -13,7 +13,7 @@ class Store {
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
   var currentUser: Option[Employee] = None
-  var calendar: java.util.Calendar = getCal
+  val calendar: java.util.Calendar = getCal
   final val pathToPersons: String = new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "persons.txt"
   final val pathToItems: String =  new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "itemList.txt"
 
@@ -184,7 +184,9 @@ def calcTotal(basket: List[Item]): Double = {
 
   // this gives you the real time now (for adding to receipt lines when items are sold)
   def now: java.util.Date = {
-    Calendar.getInstance().getTime
+    val cal = Calendar.getInstance()
+    cal.set(Calendar.DATE, this.calendar.get(Calendar.DATE))
+    cal.getTime
   }
 
 
