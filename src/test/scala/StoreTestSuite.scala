@@ -6,7 +6,7 @@ import org.scalatest.junit.JUnitRunner
 class StoreTestSuite extends FunSuite {
   val store: Store = new Store
   store.readPersons()
-  //store.readItems()
+  store.readItems()
 
   test("store.readPersons: create some Persons from a file") {
     store.readPersons()
@@ -50,7 +50,11 @@ class StoreTestSuite extends FunSuite {
     store.updateCustomerPoints(original.id, 10, true)
     assert(originalPoints != original.rewardPoints)
   }
-
+  test("store.login: employee can loginto system") {
+    assert(!store.currentUser.isDefined)
+    store.login(store.createEmployee("Larry", true))
+    assert(store.currentUser.isDefined)
+  }
 
   test("Store.readItems: create some Items from a file") {
     assert(store.itemsMap.nonEmpty)
