@@ -1,11 +1,13 @@
 /**
   * Created by matt on 19/06/17.
   */
-import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.Date
 
 import scala.io.Source
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 class Store {
   var dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
@@ -29,6 +31,7 @@ class Store {
   }
 
   def readPersons(): Unit = {
+    println("in readPersons " + pathToPersons)
     for (line <- Source.fromFile(pathToPersons).getLines) {
       println(line)
       val args = line.split(",")
@@ -89,6 +92,7 @@ class Store {
   def deleteItemByID(id: String): Unit ={
     itemsMap -= id
   }
+
   def deleteItemByName(name: String): Unit = {
     itemsMap.keys.foreach{items => if(itemsMap(items).name.equals(name)){deleteItemByID(items)}}
   }
@@ -117,18 +121,27 @@ class Store {
 
   //MAKE THIS METHOD TAKE CUSTOMER ID?
   def sellItems(basket: List[Item], usePoints: Boolean, custID: String): Unit = {
-    val total = calcTotal(basket)
-    val points = calcPoints(total.toInt, custID, usePoints)
+    var newBasket = ListBuffer[Item]()
+    basket.foreach(x => if(x.quantity > 0){newBasket += x } else { println("Item: "+x.name+ " is out of stock and has been removed from basket")})
 
-    addReciept(custID,basket,total)
+    if(newBasket.size <= 0)
+      {
+        println("All items out of stock. Transaction cancelled.")
+      }
+    else {
+      val total = calcTotal(basket.toList).toInt
+      val points = calcPoints(total, custID, usePoints)
+      addReciept(custID, basket.toList, total)
+    }
   }
-  def calcTotal(basket: List[Item]): Double = {
-    var total = 0.0
-    for (x <- 0 until basket.size) {
-      if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
-      } else {println("Item " + basket(x).name + " is out of stock")}}
-    total
-  }
+
+def calcTotal(basket: List[Item]): Double = {
+  var total = 0.0
+  for (x <- 0 until basket.size) {
+    if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
+    } else {println("Item " + basket(x).name + " is out of stock")}}
+  total
+}
   def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
     var newTotal = total
     if (!usePoints) {
@@ -147,9 +160,9 @@ class Store {
     newTotal
   }
 
-  def updateItemName(name: String,update:String):Unit= {
-   getItemByName(name).name = update
-  }
+    def updateItemName(name: String,update:String):Unit= {
+     getItemByName(name).name = update
+    }
 
   def updateItemCost(name: String,update:Double):Unit= {
     getItemByName(name).cost = update
@@ -195,21 +208,27 @@ class Store {
     cal.set(Calendar.DATE, this.calendar.get(Calendar.DATE))
     cal.getTime
   }
+
   def addReciept(customerID:String, ItemList:List[Item], totalPrice:Double): Unit = {
     val reciept = new Reciept(customerID, ItemList, totalPrice)
     dayReceiptMap += (now -> reciept)
     println(printReciept(reciept))
-
   }
 
   def printReciept(reciept:Reciept): String ={
     var str: String = ""
     val customer:Customer = getPerson(reciept.customerID).asInstanceOf[Customer]
-
-    reciept.itemList.foreach(x => str += "- " + x.name + "  £" + x.cost + "\n")
-
-    "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: " + reciept.totalPrice + "\n\nNew Points Total: " + customer.rewardPoints + "\n\n--- END OF RECIEPT ---\n\n"
+    reciept.itemList.foreach(x => str +=  "- " + x.name + "  £" + f"${x.cost}%.2f" +
+      {if(checkIfPreOrder(x.availableDate).after(today)){" (Pre-order)"} else {""}}
+      + "\n")
+    "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: £" + f"${reciept.totalPrice}%.2f" + "\n\nNew Points Total: " + customer.rewardPoints + "\n\n--- END OF RECIEPT ---\n\n"
   }
+
+  def checkIfPreOrder(date : String): Date ={
+    var Date = new SimpleDateFormat("dd/MM/yyyy").parse(date);
+    Date
+  }
+
 
 
 }

@@ -66,21 +66,15 @@ class StoreTestSuite extends FunSuite {
   }
 
 
-//  test("Store.sellItem: Sell item from store") {
-//    var customerBasket = List(store.getItemByName("Monster Hunter"),store.getItemByName("Lara-Croft"))
-//    var originalM = store.getItemByName("Monster Hunter").quantity
-//    var originalL = store.getItemByName("Lara-Croft").quantity
-//    store.sellItems(customerBasket)
-//    assert(store.getItemByName("Monster Hunter").quantity == originalM-1)
-//    assert(store.getItemByName("Lara-Croft").quantity == originalL-1)
-//  }
+  test("Store.sellItem: Sell item from store") {
+    var customerBasket = List(store.getItemByName("Monster Hunter"),store.getItemByName("Lara-Croft"))
+    var originalM = store.getItemByName("Monster Hunter").quantity
+    var originalL = store.getItemByName("Lara-Croft").quantity
+    store.sellItems(customerBasket,false, "CUS-1")
+    assert(store.getItemByName("Monster Hunter").quantity == originalM-1)
+    assert(store.getItemByName("Lara-Croft").quantity == originalL-1)
+  }
 
-//  test("Store.sellItem: Sell  more items than are in stock") {
-//    var customerBasket = List(store.getItemByName("Monster Hunter"))
-//    store.getItemByName("Monster Hunter").quantity = 0
-//    store.sellItems(customerBasket)
-//    assert(store.getItemByName("Monster Hunter").quantity > 0)
-//  }
     test("Store.deleteItems: deletes Items from a file") {
       store.deleteItemByID("ITM1")
       assert(!store.itemsMap.contains("ITM1"))
@@ -96,6 +90,28 @@ class StoreTestSuite extends FunSuite {
       store.removeStock("Monster Hunter", 100)
       assert(store.getItemByName("Monster Hunter").quantity == original-100)
     }
+
+
+  test("Store.calcTotal: calculates total from a list of items") {
+    var customerBasket = List(store.getItemByName("Monster Hunter"), store.getItemByName("Lara-Croft"), store.getItemByName("Mario-Croft"))
+    var compareTotal = store.getItemByName("Monster Hunter").cost + store.getItemByName("Lara-Croft").cost + store.getItemByName("Mario-Croft").cost
+    assert(store.calcTotal(customerBasket) == compareTotal)
+  }
+
+  test("Store.sellItem: calculates total from a list of items") {
+    var customerBasket = List(store.getItemByName("Monster Hunter"), store.getItemByName("Lara-Croft"), store.getItemByName("Mario-Croft"))
+    var compareTotal = store.getItemByName("Monster Hunter").cost + store.getItemByName("Lara-Croft").cost + store.getItemByName("Mario-Croft").cost
+    assert(store.calcTotal(customerBasket) == compareTotal)
+  }
+
+   //item, cost 0.0, isPreorder true/false
+  test("Store.sellItem: Sell  more items than are in stock") {
+    var customerBasket = List(store.getItemByName("Monster Hunter"))
+    store.getItemByName("Monster Hunter").quantity = 0
+    store.sellItems(customerBasket, false, "CUS-1")
+    assert(store.getItemByName("Monster Hunter").quantity == 0)
+  }
+
   test("Store.updateItems: update Items from a file") {
     println(store.itemsMap.size)
     store.updateItemCost("Monster Hunter", 50.00)
