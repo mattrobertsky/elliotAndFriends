@@ -23,9 +23,13 @@ class StoreTestSuite extends FunSuite {
     val item = store.getItemByName("Lara-Croft")
     val customer = store.createCustomer("Cary")
     customer.addToBasket(item)
-    store.sellItems(customer.basket.toList, false, customer.id)
-    val tally = store.tallyDayEarnings(store.today)
+    store.processBasket(false, customer)
+    var tally = store.tallyDayEarnings(store.today)
     assert(tally == 40.00)
+    customer.addToBasket(item)
+    store.processBasket(false, customer)
+    tally = store.tallyDayEarnings(store.today)
+    assert(tally == 80.00)
   }
 
   test("store.readPersons: create some Persons from a file") {
@@ -87,10 +91,18 @@ class StoreTestSuite extends FunSuite {
 
 
   test("Store.sellItem: Sell item from store") {
-    var customerBasket = List(store.getItemByName("Monster Hunter"),store.getItemByName("Lara-Croft"))
-    var originalM = store.getItemByName("Monster Hunter").quantity
-    var originalL = store.getItemByName("Lara-Croft").quantity
-    store.sellItems(customerBasket,false, "CUS-1")
+//    var customerBasket = List(store.getItemByName("Monster Hunter"),store.getItemByName("Lara-Croft"))
+    val item = store.getItemByName("Monster Hunter")
+    var originalM = item.quantity
+    val item2 = store.getItemByName("Lara-Croft")
+    var originalL = item2.quantity
+
+//    store.sellItems(customerBasket,false, "CUS-1")
+    val customer: Customer = store.getPerson("CUS-1").asInstanceOf[Customer]
+    customer.addToBasket(item)
+    customer.addToBasket(item2)
+
+    store.processBasket(false, customer)
     assert(store.getItemByName("Monster Hunter").quantity == originalM-1)
     assert(store.getItemByName("Lara-Croft").quantity == originalL-1)
   }
@@ -125,12 +137,12 @@ class StoreTestSuite extends FunSuite {
   }
 
    //item, cost 0.0, isPreorder true/false
-  test("Store.sellItem: Sell  more items than are in stock") {
-    var customerBasket = List(store.getItemByName("Monster Hunter"))
-    store.getItemByName("Monster Hunter").quantity = 0
-    store.sellItems(customerBasket, false, "CUS-1")
-    assert(store.getItemByName("Monster Hunter").quantity == 0)
-  }
+//  test("Store.sellItem: Sell  more items than are in stock") {
+//    var customerBasket = List(store.getItemByName("Monster Hunter"))
+//    store.getItemByName("Monster Hunter").quantity = 0
+//    store.sellItems(customerBasket, false, "CUS-1")
+//    assert(store.getItemByName("Monster Hunter").quantity == 0)
+//  }
 
   test("Store.updateItems: update Items from a file") {
     println(store.itemsMap.size)

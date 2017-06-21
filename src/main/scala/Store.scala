@@ -10,7 +10,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 class Store {
-  var dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
+  var dayReceiptMap: Map[java.util.Date, ListBuffer[Reciept]] = Map[java.util.Date, ListBuffer[Reciept]]().empty
   var stockMap: Map[String, String] = Map[String, String]().empty
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
@@ -21,7 +21,13 @@ class Store {
 
   def tallyDayEarnings(date: java.util.Date): Double = {
     var total = 0.0
-    dayReceiptMap.foreach(reciept => if(reciept._1.equals(date)){total += reciept._2.totalPrice})
+
+    val receipts: ListBuffer[Reciept] = dayReceiptMap(date)
+    for (receipt <- receipts) {
+      total += receipt.totalPrice
+    }
+
+//    dayReceiptMap.foreach(reciept => if(reciept._1.equals(date)){total += reciept._2.totalPrice})
     total
   }
 
@@ -120,28 +126,35 @@ class Store {
     }
 
   //MAKE THIS METHOD TAKE CUSTOMER ID?
-  def sellItems(basket: List[Item], usePoints: Boolean, custID: String): Unit = {
-    var newBasket = ListBuffer[Item]()
-    basket.foreach(x => if(x.quantity > 0){newBasket += x } else { println("Item: "+x.name+ " is out of stock and has been removed from basket")})
+  def processBasket(usePoints: Boolean, customer: Customer): Unit = {
 
-    if(newBasket.size <= 0)
-      {
-        println("All items out of stock. Transaction cancelled.")
-      }
-    else {
-      val total = calcTotal(basket.toList).toInt
-      val points = calcPoints(total, custID, usePoints)
-      addReciept(custID, basket.toList, total)
+    customer.basket.foreach(x => if(x.quantity == 0) {
+      customer.basket -= x
+      println("Item: "+x.name+ " is out of stock and has been removed from basket")
+    })
+
+    if(customer.basket.size <=0) {
+      println("All items out of stock. Transaction cancelled.")
+    } else {
+
+      val total = calcTotal(customer.basket.toList)
+      //    val total = calcTotal(basket)
+      //    val points = calcPoints(total.toInt, customer.id, usePoints)
+      calcPoints(total.toInt, customer.id, usePoints)
+
+      addReciept(customer.id, customer.basket.toList, total)
     }
+    customer.emptyBasket
   }
 
-def calcTotal(basket: List[Item]): Double = {
-  var total = 0.0
-  for (x <- 0 until basket.size) {
-    if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
-    } else {println("Item " + basket(x).name + " is out of stock")}}
-  total
-}
+  def calcTotal(basket: List[Item]): Double = {
+    var total = 0.0
+    for (x <- 0 until basket.size) {
+      if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
+      } else {println("Item " + basket(x).name + " is out of stock")}}
+    total
+  }
+
   def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
     var newTotal = total
     if (!usePoints) {
@@ -160,9 +173,9 @@ def calcTotal(basket: List[Item]): Double = {
     newTotal
   }
 
-    def updateItemName(name: String,update:String):Unit= {
-     getItemByName(name).name = update
-    }
+  def updateItemName(name: String,update:String):Unit= {
+   getItemByName(name).name = update
+  }
 
   def updateItemCost(name: String,update:Double):Unit= {
     getItemByName(name).cost = update
@@ -211,7 +224,14 @@ def calcTotal(basket: List[Item]): Double = {
 
   def addReciept(customerID:String, ItemList:List[Item], totalPrice:Double): Unit = {
     val reciept = new Reciept(customerID, ItemList, totalPrice)
-    dayReceiptMap += (today -> reciept)
+    var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
+    try {
+      receiptsList = dayReceiptMap(this.today)
+    } catch {
+      case e: NoSuchElementException => dayReceiptMap += (this.today -> receiptsList) // TODO refactor using Option
+    }
+    receiptsList += reciept
+      //    dayReceiptMap += (today -> reciept)
     println(printReciept(reciept))
   }
 
@@ -228,7 +248,6 @@ def calcTotal(basket: List[Item]): Double = {
     var Date = new SimpleDateFormat("dd/MM/yyyy").parse(date);
     Date
   }
-
 
 
 }
