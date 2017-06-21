@@ -55,6 +55,15 @@ class Store {
     customer
   }
 
+  def updateCustomerPoints(id: String, points: Int, increment: Boolean): Unit = {
+    val customer:Customer = getPerson(id).asInstanceOf[Customer]
+    if (increment) {
+      customer.rewardPoints += points
+    } else {
+      customer.rewardPoints -= points
+    }
+  }
+
   def createItem(availableDate:String, name:String, cost:Double, itemType:String, quantity:Int): Item ={
     val newItem = new Item(availableDate, name, cost, itemType, quantity)
     itemsMap(newItem.id) = newItem
