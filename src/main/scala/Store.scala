@@ -23,6 +23,11 @@ class Store {
     total
   }
 
+  def init: Unit = {
+    this.readPersons()
+    this.readItems()
+  }
+
   def readPersons(): Unit = {
     for (line <- Source.fromFile(pathToPersons).getLines) {
       println(line)
