@@ -1,9 +1,10 @@
-class Reciept {
+class Reciept(val customerID:String, val itemList:List[Item],val totalPrice:Double)extends IdAble {
   val date:  String = ""
-  val id = ""
-  val customerId = ""
-  val total = 00.00
 
-  val itemsList = List[RecieptItems]()
-  // hgd
+  val id = this.nextId()
+
+  override def nextId(): String = {
+    "RCPT-" + IdAble.nextIndex()
+  }
+
 }

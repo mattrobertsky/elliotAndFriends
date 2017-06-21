@@ -19,7 +19,7 @@ class Store {
 
   def tallyDayEarnings(date: java.util.Date): Double = {
     var total = 0.0
-    dayReceiptMap.foreach(reciept => if(reciept._1.equals(date)){total += reciept._2.total})
+    dayReceiptMap.foreach(reciept => if(reciept._1.equals(date)){total += reciept._2.totalPrice})
     total
   }
 
@@ -112,8 +112,10 @@ class Store {
 
   //MAKE THIS METHOD TAKE CUSTOMER ID?
   def sellItems(basket: List[Item], usePoints: Boolean, custID: String): Unit = {
-    val total = calcTotal(basket).toInt
-    val points = calcPoints(total, custID, usePoints)
+    val total = calcTotal(basket)
+    val points = calcPoints(total.toInt, custID, usePoints)
+
+    addReciept(custID,basket,total)
   }
 def calcTotal(basket: List[Item]): Double = {
   var total = 0.0
@@ -121,6 +123,7 @@ def calcTotal(basket: List[Item]): Double = {
     if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
     } else {println("Item " + basket(x).name + " is out of stock")}}
   total
+
 }
   def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
     var newTotal = total
@@ -185,6 +188,21 @@ def calcTotal(basket: List[Item]): Double = {
   // this gives you the real time now (for adding to receipt lines when items are sold)
   def now: java.util.Date = {
     Calendar.getInstance().getTime
+  }
+  def addReciept(customerID:String, ItemList:List[Item], totalPrice:Double): Unit = {
+    val reciept = new Reciept(customerID, ItemList, totalPrice)
+    dayReceiptMap += (now -> reciept)
+    println(printReciept(reciept))
+
+  }
+
+  def printReciept(reciept:Reciept): String ={
+    var str: String = ""
+    val customer:Customer = getPerson(reciept.customerID).asInstanceOf[Customer]
+
+    reciept.itemList.foreach(x => str += "- " + x.name + "  £" + x.cost + "\n")
+
+    "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: " + reciept.totalPrice + "\n\nNew Points Total: " + customer.rewardPoints + "\n\n--- END OF RECIEPT ---\n\n"
   }
 
 
