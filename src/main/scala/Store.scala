@@ -13,6 +13,8 @@ class Store {
   var stockMap: Map[String, String] = Map[String, String]().empty
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
+  var currentUser: Option[Employee] = None
+
   //C:\Users\Administrator\Desktop\Jack Temp\elliotAndFriends\src\main\resources
   final val pathToPersons: String = new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "persons.txt"
   final val pathToItems: String =  new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "itemList.txt"
@@ -62,6 +64,14 @@ class Store {
     } else {
       customer.rewardPoints -= points
     }
+  }
+
+  def login(employee: Employee) = {
+    currentUser = Option(employee)
+  }
+
+  def logout(employee: Employee) = {
+    currentUser = None
   }
 
   def createItem(availableDate:String, name:String, cost:Double, itemType:String, quantity:Int): Item ={
@@ -152,4 +162,6 @@ def calcTotal(basket: List[Item]): Double = {
   def removeStock(name: String, amount: Int): Unit = {
     getItemByName(name).quantity -= amount
   }
+
+
 }
