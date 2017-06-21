@@ -11,7 +11,7 @@ class Store {
   var stockMap: Map[String, String] = Map[String, String]().empty
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
-  final val pathToPersons: String = new java.io.File(".").getCanonicalPath + "/src/main/resources/persons.txt"
+  final val pathToPersons: String = new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" +java.io.File.separator+"main"+java.io.File.separator+"resources"+java.io.File.separator+"persons.txt"
   final val pathToItems: String =  new java.io.File(".").getCanonicalPath + "/src/main/resources/itemList.txt"
 
   def tallyDayEarnings(date: java.util.Date): Double = {
@@ -114,5 +114,12 @@ class Store {
 
   def removeStock(name: String, amount: Int): Unit = {
     getItemByName(name).quantity -= amount
+  }
+
+  def main(args: Array[String]): Unit = {
+    val store = new Store
+    store.createItem("2018-1-1","Monster-Hunter",20.00,"Game",200)
+    println(store.itemsMap)
+
   }
 }

@@ -9,30 +9,37 @@ class StoreTestSuite extends FunSuite {
 
   test("store.readPersons: create some Persons from a file") {
     store.readPersons()
-    assert(store.personMap.size == 3)
+    assert(store.personMap.size == 2)
     assert(store.personMap.contains("CUS-1"))
   }
 
   test("store.createEmployee: create one manager using the constructor") {
     val manager: Employee = store.createEmployee("someName", true)
-    assert(manager.id == "someId")
+    assert(manager.id == "EMP-1")
     assert(manager.name == "someName")
     assert(manager.isManager)
   }
   test("store.createEmployee: create one regular old employee using the constructor") {
-    val employee: Employee = store.createEmployee("someName", false)
-    assert(employee.id == "someId")
-    assert(employee.name == "someName")
+    val employee: Employee = store.createEmployee("Hugh", false)
+    assert(employee.id == "EMP-1")
+    assert(employee.name == "Hugh")
     assert(!employee.isManager)
   }
   test("store.customer: create one customer using the constructor") {
     val customer: Customer = store.createCustomer("someName")
-    assert(customer.id == "someId")
+    assert(customer.id == "CUS-1")
     assert(customer.name == "someName")
     assert(customer.rewardPoints == 0)
   }
   test("Store.readItems: create some Items from a file") {
     assert(store.itemsMap.nonEmpty)
+  }
+
+  test("get item by values on Item Object"){
+
+    println(store.itemsMap)
+
+
   }
 
   test("Store.updateItems: update Items from a file") {
@@ -46,6 +53,7 @@ class StoreTestSuite extends FunSuite {
     //assert(store.getItemByName("Monster-Hunter-Remastered").availableDate.after(2019-6-11))
     //FIX DATE
   }
+
 
   test("Store.sellItem: Sell item from store") {
     var customerBasket = List(store.getItemByName("Monster Hunter"),store.getItemByName("Lara-Croft"))
