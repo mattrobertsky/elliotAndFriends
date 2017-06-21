@@ -13,7 +13,7 @@ class Store {
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
   var currentUser: Option[Employee] = None
-  var calendar: java.util.Calendar = getCal
+  val calendar: java.util.Calendar = getCal
   final val pathToPersons: String = new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "persons.txt"
   final val pathToItems: String =  new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "itemList.txt"
 
@@ -21,6 +21,11 @@ class Store {
     var total = 0.0
     dayReceiptMap.foreach(reciept => if(reciept._1.equals(date)){total += reciept._2.totalPrice})
     total
+  }
+
+  def init: Unit = {
+    this.readPersons()
+    this.readItems()
   }
 
   def readPersons(): Unit = {
@@ -117,14 +122,13 @@ class Store {
 
     addReciept(custID,basket,total)
   }
-def calcTotal(basket: List[Item]): Double = {
-  var total = 0.0
-  for (x <- 0 until basket.size) {
-    if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
-    } else {println("Item " + basket(x).name + " is out of stock")}}
-  total
-
-}
+  def calcTotal(basket: List[Item]): Double = {
+    var total = 0.0
+    for (x <- 0 until basket.size) {
+      if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
+      } else {println("Item " + basket(x).name + " is out of stock")}}
+    total
+  }
   def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
     var newTotal = total
     if (!usePoints) {
@@ -143,9 +147,9 @@ def calcTotal(basket: List[Item]): Double = {
     newTotal
   }
 
-    def updateItemName(name: String,update:String):Unit= {
-     getItemByName(name).name = update
-    }
+  def updateItemName(name: String,update:String):Unit= {
+   getItemByName(name).name = update
+  }
 
   def updateItemCost(name: String,update:Double):Unit= {
     getItemByName(name).cost = update
@@ -187,7 +191,9 @@ def calcTotal(basket: List[Item]): Double = {
 
   // this gives you the real time now (for adding to receipt lines when items are sold)
   def now: java.util.Date = {
-    Calendar.getInstance().getTime
+    val cal = Calendar.getInstance()
+    cal.set(Calendar.DATE, this.calendar.get(Calendar.DATE))
+    cal.getTime
   }
   def addReciept(customerID:String, ItemList:List[Item], totalPrice:Double): Unit = {
     val reciept = new Reciept(customerID, ItemList, totalPrice)
