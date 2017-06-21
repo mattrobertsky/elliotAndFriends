@@ -51,7 +51,6 @@ class StoreTestSuite extends FunSuite {
     assert(originalPoints != original.rewardPoints)
   }
 
-
   test("Store.readItems: create some Items from a file") {
     assert(store.itemsMap.nonEmpty)
   }
