@@ -211,7 +211,7 @@ def calcTotal(basket: List[Item]): Double = {
 
   def addReciept(customerID:String, ItemList:List[Item], totalPrice:Double): Unit = {
     val reciept = new Reciept(customerID, ItemList, totalPrice)
-    dayReceiptMap += (now -> reciept)
+    dayReceiptMap += (today -> reciept)
     println(printReciept(reciept))
   }
 
