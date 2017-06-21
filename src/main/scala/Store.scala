@@ -126,8 +126,7 @@ def calcTotal(basket: List[Item]): Double = {
         updateCustomerPoints(custID,customer.rewardPoints,false)
       }
   }
-   newTotal
-  }
+
     def updateItemName(name: String,update:String):Unit= {
      getItemByName(name).name = update
     }
