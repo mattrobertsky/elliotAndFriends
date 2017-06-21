@@ -55,6 +55,15 @@ class Store {
     customer
   }
 
+  def updateCustomerPoints(id: String, points: Int, increment: Boolean): Unit ={
+    val customer: Customer = getPerson(id).asInstanceOf[Customer]
+    if(increment) {
+      customer.rewardPoints += points
+    } else {
+      customer.rewardPoints -= points
+    }
+  }
+
   def createItem(availableDate:String, name:String, cost:Double, itemType:String, quantity:Int): Item ={
     val newItem = new Item(availableDate, name, cost, itemType, quantity)
     itemsMap(newItem.id) = newItem
@@ -91,14 +100,34 @@ class Store {
     }
 
   //MAKE THIS METHOD TAKE CUSTOMER ID?
-  def sellItems(basket: List[Item]): Double = {
-    var total = 0.0
-    for (x <- 0 until basket.size) {
-      if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
-      } else {println("Item " + basket(x).name + " is out of stock")}}
-   total
+  def sellItems(basket: List[Item], usePoints: Boolean, custID: String): Unit = {
+    val total = calcTotal(basket).toInt
+    val points = calcPoints(total, custID, usePoints)
   }
-
+def calcTotal(basket: List[Item]): Double = {
+  var total = 0.0
+  for (x <- 0 until basket.size) {
+    if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
+    } else {println("Item " + basket(x).name + " is out of stock")}}
+  total
+}
+  def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
+  var newTotal = total
+    if (!usePoints ){
+    val pointsTotal = newTotal/10
+    updateCustomerPoints(custID,pointsTotal,true)
+  } else {
+    val customer:Customer = getPerson(custID).asInstanceOf[Customer]
+      if(customer.rewardPoints > newTotal){
+        updateCustomerPoints(custID,newTotal,false)
+        newTotal = 0
+      }else{
+        newTotal -= customer.rewardPoints
+        updateCustomerPoints(custID,customer.rewardPoints,false)
+      }
+  }
+   newTotal
+  }
     def updateItemName(name: String,update:String):Unit= {
      getItemByName(name).name = update
     }
