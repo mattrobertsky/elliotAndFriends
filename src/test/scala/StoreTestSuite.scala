@@ -10,7 +10,6 @@ class StoreTestSuite extends FunSuite {
 
   test("store.readPersons: create some Persons from a file") {
     store.readPersons()
-//    assert(store.personMap.size == 3)
     assert(store.personMap.contains("CUS-1"))
   }
 
@@ -42,6 +41,7 @@ class StoreTestSuite extends FunSuite {
     val getMe = store.createCustomer("Gary")
     val gotMe = store.getPerson(getMe.id)
     assert(getMe.id == gotMe.id)
+    store.deletePerson(getMe)
   }
 
   test("store.updateCustomerPoints: change reward points of the customer") {
@@ -49,11 +49,15 @@ class StoreTestSuite extends FunSuite {
     val originalPoints = original.rewardPoints
     store.updateCustomerPoints(original.id, 10, true)
     assert(originalPoints != original.rewardPoints)
+    store.deletePerson(original)
   }
   test("store.login: employee can loginto system") {
     assert(!store.currentUser.isDefined)
-    store.login(store.createEmployee("Larry", true))
+    val larry = store.createEmployee("Larry", true)
+    store.login(larry)
     assert(store.currentUser.isDefined)
+    store.logout(larry)
+    store.deletePerson(larry)
   }
 
   test("Store.readItems: create some Items from a file") {

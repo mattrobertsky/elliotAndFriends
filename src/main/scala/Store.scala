@@ -9,7 +9,6 @@ import scala.collection.mutable
 class Store {
 
 
-
   var dayReceiptMap: Map[java.util.Date, Reciept] = Map[java.util.Date, Reciept]().empty
   var stockMap: Map[String, String] = Map[String, String]().empty
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
@@ -69,6 +68,10 @@ class Store {
 
   def login(employee: Employee) = {
     currentUser = Option(employee)
+  }
+
+  def logout(employee: Employee) = {
+    currentUser = None
   }
 
   def createItem(availableDate:String, name:String, cost:Double, itemType:String, quantity:Int): Item ={
