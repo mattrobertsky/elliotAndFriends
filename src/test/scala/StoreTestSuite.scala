@@ -60,6 +60,12 @@ class StoreTestSuite extends FunSuite {
     store.deletePerson(larry)
   }
 
+//  test("store:open: the store can be opened (day is set)") {
+////    store.close
+////    val currentDate = store.getDate
+////    assert(store.currentDate == currentDate)
+//  }
+
   test("Store.readItems: create some Items from a file") {
     assert(store.itemsMap.nonEmpty)
   }

@@ -2,6 +2,7 @@
   * Created by matt on 19/06/17.
   */
 import java.text.SimpleDateFormat
+import java.util.Calendar
 
 import scala.io.Source
 import scala.collection.mutable
@@ -14,8 +15,7 @@ class Store {
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
   var currentUser: Option[Employee] = None
-
-  //C:\Users\Administrator\Desktop\Jack Temp\elliotAndFriends\src\main\resources
+  var calendar: java.util.Calendar = getCal
   final val pathToPersons: String = new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "persons.txt"
   final val pathToItems: String =  new java.io.File(".").getCanonicalPath + java.io.File.separator + "src" + java.io.File.separator + "main" + java.io.File.separator + "resources" + java.io.File.separator + "itemList.txt"
 
@@ -140,6 +140,29 @@ class Store {
 
   def removeStock(name: String, amount: Int): Unit = {
     getItemByName(name).quantity -= amount
+  }
+
+  private def getCal() = {
+    val cal: Calendar = Calendar.getInstance()
+    cal.set(Calendar.HOUR_OF_DAY, 0)
+    cal.set(Calendar.MINUTE, 0)
+    cal.set(Calendar.SECOND, 0)
+    cal
+  }
+
+  // this increments the local date
+  def nextDay: Unit = {
+    this.calendar.add(Calendar.DATE, 1)
+  }
+
+  // returns the local date (can be used as a key on the dayReceiptMap)
+  def today: java.util.Date = {
+    calendar.getTime
+  }
+
+  // this gives you the real time now (for adding to receipt lines when items are sold)
+  def now: java.util.Date = {
+    Calendar.getInstance().getTime
   }
 
 
