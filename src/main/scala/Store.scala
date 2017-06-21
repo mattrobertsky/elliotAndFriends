@@ -115,13 +115,13 @@ class Store {
     val total = calcTotal(basket).toInt
     val points = calcPoints(total, custID, usePoints)
   }
-def calcTotal(basket: List[Item]): Double = {
-  var total = 0.0
-  for (x <- 0 until basket.size) {
-    if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
-    } else {println("Item " + basket(x).name + " is out of stock")}}
-  total
-}
+  def calcTotal(basket: List[Item]): Double = {
+    var total = 0.0
+    for (x <- 0 until basket.size) {
+      if (basket(x).quantity > 0) { basket(x).quantity -= 1; total += basket(x).cost
+      } else {println("Item " + basket(x).name + " is out of stock")}}
+    total
+  }
   def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
     var newTotal = total
     if (!usePoints) {
@@ -140,9 +140,9 @@ def calcTotal(basket: List[Item]): Double = {
     newTotal
   }
 
-    def updateItemName(name: String,update:String):Unit= {
-     getItemByName(name).name = update
-    }
+  def updateItemName(name: String,update:String):Unit= {
+   getItemByName(name).name = update
+  }
 
   def updateItemCost(name: String,update:Double):Unit= {
     getItemByName(name).cost = update
