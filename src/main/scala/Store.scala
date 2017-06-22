@@ -468,7 +468,7 @@ object Store {
       store.allReceipts()
       doPrompt
     }
-
+//
 
     def doTallyDay: Unit = {
       println(s"days earnings £${store.tallyDayEarnings(store.today)}")
