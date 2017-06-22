@@ -259,6 +259,6 @@ class StoreTestSuite extends FunSuite {
     var date = store.checkIfPreOrder(store.getItemByName("Monster-Hunter-Remastered").availableDate)
     var date2 = store.checkIfPreOrder("05/11/2019")
     assert(date.after(date2))
-    //FIX DATE
+    //FIX DATEfrfgfgt
   }
 }
