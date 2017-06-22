@@ -92,22 +92,15 @@ class Store {
 
 
   def createEmployee(someName: String, isManager: Boolean): Employee =  {
-    if(checkIfManager()){
-      val employee = new Employee(someName, isManager)
-      personMap(employee.id) = employee
-      employee
-    }else{
-      throw new Exception ("Manager Access required")}
+    val employee = new Employee(someName, isManager)
+    personMap(employee.id) = employee
+    employee
   }
 
   def createCustomer(someName: String): Customer =  {
-    if(checkIfManager()){
-      val customer = new Customer(someName)
-      personMap(customer.id) = customer
-      customer
-    }else{
-      throw new Exception ("Manager Access required")}
-
+    val customer = new Customer(someName)
+    personMap(customer.id) = customer
+    customer
   }
 
   def updateCustomerPoints(id: String, points: Int, increment: Boolean): Unit ={
