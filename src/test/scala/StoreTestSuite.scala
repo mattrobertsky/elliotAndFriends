@@ -68,13 +68,6 @@ class StoreTestSuite extends FunSuite {
     store.deletePerson(getMe)
   }
 
-  test("store.updateCustomerPoints: change reward points of the customer") {
-    val original = store.createCustomer("Barry")
-    val originalPoints = original.rewardPoints
-    store.updateCustomerPoints(original.id, 10, true)
-    assert(originalPoints != original.rewardPoints)
-    store.deletePerson(original)
-  }
   test("store.login: employee can loginto system") {
     assert(!store.currentUser.isDefined)
     val larry = store.createEmployee("Larry", true)
@@ -144,11 +137,72 @@ class StoreTestSuite extends FunSuite {
 //    assert(store.getItemByName("Monster Hunter").quantity == 0)
 //  }
 
+
+  test("Store.receiptList: should print out all the receipts in dailyreceiptList"){
+    store.receiptList("21/06/2017")
+
+  }
+
+
+  test("Store.listItems: lists all items in the store"){
+    println("--- Testing for item list ---")
+    store.listItems()
+    println("--- End of item test ---\n")
+  }
+
+  test("Store.listEmp: lists all employees in the store") {
+    println("--- Testing for employee list ---")
+    store.listEmp()
+    println("--- End of employee test ---\n")
+  }
+
+  test("Store.listCus: lists all customers in the store"){
+    println("--- Testing for customer list ---")
+    store.listCus()
+    println("--- End of customer test ---\n")
+  }
+
+  test("store.updateCustomerPoints: change reward points of the customer") {
+    val original = store.createCustomer("Barry")
+    val originalPoints = original.rewardPoints
+    store.updateCustomerPoints(original.id, 10, true)
+    assert(originalPoints != original.rewardPoints)
+    store.deletePerson(original)
+  }
+
+  test("Store.calculatePoints1: calculates customer points if boolean is true") {
+    val customer0: Customer = store.getPerson("CUS-8").asInstanceOf[Customer]
+    val startingPoints = customer0.rewardPoints
+    println(startingPoints)
+    assert(store.calcPoints(30, "CUS-8", true) == (30-startingPoints))
+  }
+
+  test("Store.calculatePoints2: deducts customer points if customer has points"){
+    val customer2: Customer = store.getPerson("CUS-8").asInstanceOf[Customer]
+    val startingPoints = customer2.rewardPoints
+    customer2.rewardPoints += 4
+    assert(store.calcPoints(40, "CUS-8", true) == 36)
+  }
+
+  test("Store.calculatePoints3: deducts customer points if customer has points"){
+    val customer3: Customer = store.getPerson("CUS-8").asInstanceOf[Customer]
+    val startingPoints = customer3.rewardPoints
+    customer3.rewardPoints += 50
+    assert(store.calcPoints(500, "CUS-8", true) == 450)
+  }
+
+  test("Store.calculatePoints4: calculates customer points if boolean is false") {
+    val customerD: Customer = store.getPerson("CUS-8").asInstanceOf[Customer]
+    val startingPoints = customerD.rewardPoints
+    val newPoints = store.calcPoints(20, "CUS-8", false)
+    assert(customerD.rewardPoints == startingPoints + 2)
+  }
+
   test("Store.updateItems: update Items from a file") {
-    println(store.itemsMap.size)
+    //println(store.itemsMap.size)
     store.updateItemCost("Monster Hunter", 50.00)
     store.updateItemQuantity("Monster Hunter", 200)
-    store.updateItemDate("Monster Hunter", "2019-6-11")
+    store.updateItemDate("Monster Hunter", "11/06/2019")
     store.updateItemName("Monster Hunter", "Monster-Hunter-Remastered")
 
     assert(store.getItemByName("Monster-Hunter-Remastered").quantity == 200)
@@ -156,6 +210,4 @@ class StoreTestSuite extends FunSuite {
     //assert(store.getItemByName("Monster-Hunter-Remastered").availableDate.after(2019-6-11))
     //FIX DATE
   }
-   //item, cost 0.0, isPreorder true/false
-
 }

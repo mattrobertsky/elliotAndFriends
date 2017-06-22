@@ -248,7 +248,49 @@ class Store {
   def checkIfPreOrder(date : String): Date ={
     var Date = new SimpleDateFormat("dd/MM/yyyy").parse(date);
     Date
+
   }
+
+  def listItems() =
+  {
+    println("Items: \n-----")
+      itemsMap.foreach(x => println("Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
+  }
+
+  def listEmp() =
+  {
+    println("Employees: \n---------")
+    personMap.foreach(x =>
+    x._2.isInstanceOf[Employee] match
+      {
+        case false =>
+        case true =>
+        println("Employee ID: " + x._2.id)
+      }
+    )
+
+  }
+
+  def listCus() =
+  {
+    println("Customers: \n---------")
+    personMap.foreach(x =>
+    x._2.isInstanceOf[Customer] match
+      {
+      case false =>
+      case true =>
+        println("Customer ID: " + x._2.id)
+      }
+    )
+  }
+
+  def receiptList(date:String) =
+  {
+    var Date = today
+    val rList = dayReceiptMap(Date)
+    rList.foreach(x=>println(printReciept(x)))
+  }
+
 
 
 }
