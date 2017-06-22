@@ -1,5 +1,5 @@
-class Reciept(val customerID:String, val itemList:List[Item],val totalPrice:Double)extends IdAble {
-  val date:  java.util.Date = java.util.Calendar.getInstance().getTime
+class Reciept(val customerID:String, val itemList:List[Item],val totalPrice:Double, val thePoints:Int, val newPoints:Int)extends IdAble {
+  val date:  String = ""
   var isPreOrder = false
   val id = this.nextId()
 

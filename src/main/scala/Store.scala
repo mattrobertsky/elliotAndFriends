@@ -102,12 +102,14 @@ class Store {
     customer
   }
 
-  def updateCustomerPoints(id: String, points: Int, increment: Boolean): Unit ={
+  def updateCustomerPoints(id: String, points: Int, increment: Boolean): Int ={
     val customer: Customer = getPerson(id).asInstanceOf[Customer]
     if(increment) {
       customer.rewardPoints += points
+      points
     } else {
       customer.rewardPoints -= points
+      points
     }
   }
 
@@ -169,9 +171,9 @@ class Store {
       println("All items out of stock. Transaction cancelled.")
     } else {
       val total = calcTotal(customer.basket.toList)
-      calcPoints(total.toInt, customer.id, usePoints)
+      var pointList = calcPoints(total.toInt, customer.id, usePoints)
 
-      addReciept(customer.id, customer.basket.toList, total)
+      addReciept(customer.id, customer.basket.toList, pointList(0), pointList(1), customer.rewardPoints)
     }
     customer.emptyBasket
   }
@@ -184,22 +186,23 @@ class Store {
     total
   }
 
-  def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
+  def calcPoints(total: Int, custID: String, usePoints: Boolean): List[Int] = {
+    var thePoints:Int = 0
     var newTotal = total
     if (!usePoints) {
       val pointsTotal = newTotal / 10
-      updateCustomerPoints(custID, pointsTotal, increment = true)
+      thePoints = updateCustomerPoints(custID, pointsTotal, true)
     } else {
       val customer: Customer = getPerson(custID).asInstanceOf[Customer]
       if (customer.rewardPoints > newTotal) {
-        updateCustomerPoints(custID, newTotal, increment = false)
+        updateCustomerPoints(custID, newTotal, false)
         newTotal = 0
       } else {
         newTotal -= customer.rewardPoints
-        updateCustomerPoints(custID, customer.rewardPoints, increment = false)
+        updateCustomerPoints(custID, customer.rewardPoints, false)
       }
     }
-    newTotal
+    List[Int](newTotal, thePoints)
   }
 
   def updateItemName(name: String,update:String):Unit= {
@@ -251,8 +254,8 @@ class Store {
     cal.getTime
   }
 
-  def addReciept(customerID:String, ItemList:List[Item], totalPrice:Double): Unit = {
-    val reciept = new Reciept(customerID, ItemList, totalPrice)
+  def addReciept(customerID:String, ItemList:List[Item], totalPrice:Double, thePoints:Int, newPoints:Int): Unit = {
+    val reciept = new Reciept(customerID, ItemList, totalPrice, thePoints, newPoints)
     var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
     try {
       receiptsList = dayReceiptMap(this.today)
@@ -271,7 +274,7 @@ class Store {
     reciept.itemList.foreach(x => str +=  "- " + x.name + "  £" + f"${x.cost}%.2f" +
       {if(checkIfPreOrder(x.availableDate).after(today)){reciept.isPreOrder = true; " (Pre-order)"} else {""}}
       + "\n")
-    "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: £" + f"${reciept.totalPrice}%.2f" + "\n\nNew Points Total: " + getPersonByID(reciept.customerID).asInstanceOf[Customer].rewardPoints + "\n\n--- END OF RECIEPT ---\n\n"
+    "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: £" + f"${reciept.totalPrice}%.2f" + "\n\nPoints Earned: " + reciept.thePoints + "\nNew Points Total: " + reciept.newPoints + "\n\n--- END OF RECIEPT ---\n\n"
   }
 
   def checkIfPreOrder(date : String): Date ={
@@ -427,7 +430,7 @@ object Store {
         store.createItem(date,name,cost.toDouble,itemType,quantity.toInt)
         doPrompt
       } else {
-        println("NO FOOL... go get you boss")
+        println("NO FOOL... go get your boss")
         doPrompt
       }
 
