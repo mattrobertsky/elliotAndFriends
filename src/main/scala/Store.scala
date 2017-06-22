@@ -285,7 +285,7 @@ class Store {
   def listItems() =
   {
     println("Items: \n-----")
-      itemsMap.foreach(x => println("Id " + x._2.id + " Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
+      itemsMap.foreach(x => println("Id " + x._2.id + " Available Date: " +x._2.availableDate + " Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
   }
 
   def listEmp() =
