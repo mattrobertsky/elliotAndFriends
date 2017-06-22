@@ -188,8 +188,8 @@ class StoreTestSuite extends FunSuite {
   }
 
 
-  test("Store.receiptList: should print out all the receipts in dailyreceiptList"){
-    store.receiptList("21/06/2017")
+  test("Store.receiptList: should print out all the receipts in dailyreceiptList with given date"){
+    store.receiptList()
 
   }
 
@@ -212,7 +212,7 @@ class StoreTestSuite extends FunSuite {
     println("--- End of customer test ---\n")
   }
 
-  test("store.updateCustomerPoints: change reward points of the customer") {
+  test("store.updateCustomerPoints: change reward point of the customer") {
     val original = store.createCustomer("Barry")
     val originalPoints = original.rewardPoints
     store.updateCustomerPoints(original.id, 10, true)
@@ -260,5 +260,9 @@ class StoreTestSuite extends FunSuite {
     var date2 = store.checkIfPreOrder("05/11/2019")
     assert(date.after(date2))
     //FIX DATEfrfgfgt
+  }
+  test("List all receipt regardless of date"){
+    store.allReceipts()
+
   }
 }

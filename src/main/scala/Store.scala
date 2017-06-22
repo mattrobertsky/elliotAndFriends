@@ -197,27 +197,27 @@ class Store {
   }
 
   def updateItemName(name: String,update:String):Unit= {
-   getItemByName(name).name = update
+   getItemByID(name).name = update
   }
 
   def updateItemCost(name: String,update:Double):Unit= {
-    getItemByName(name).cost = update
+    getItemByID(name).cost = update
   }
 
   def updateItemQuantity(name: String,update:Int):Unit= {
-    getItemByName(name).quantity = update
+    getItemByID(name).quantity = update
   }
 
   def updateItemDate(name: String,update:String):Unit= {
-    getItemByName(name).availableDate = update
+    getItemByID(name).availableDate = update
   }
 
   def addStock(name: String, amount: Int): Unit = {
-    getItemByName(name).quantity += amount
+    getItemByID(name).quantity += amount
   }
 
   def removeStock(name: String, amount: Int): Unit = {
-    getItemByName(name).quantity -= amount
+    getItemByID(name).quantity -= amount
   }
 
   private def getCal() = {
@@ -307,11 +307,16 @@ class Store {
     )
   }
 
-  def receiptList(date:String) =
+  def receiptList() =
   {
     var Date = today
     val rList = dayReceiptMap(Date)
     rList.foreach(x=>println(printReciept(x)))
+  }
+
+  def allReceipts()={
+
+    dayReceiptMap.foreach(x => x._2.foreach(y => println("Date: " + x._1 + "\n" + printReciept(y))))
   }
 
 
@@ -356,23 +361,23 @@ object Store {
         s"[10] process basket\n[11] list receipts\n[12] list preorders\n[13] tally day\n[14] total tally\n[15] forecast daily tally\n[16] close/open\n [17]logout\n\n")
 
       taskId match {
-        case "1" => addElse; doListEmployees
-        case "2" => addElse; doCreateEmployee
-        case "3" => addElse; doDeleteEmployee
-        case "4" => addElse; doListCustomers
-        case "5" => addElse; doCreateCustomer
-        case "6" => addElse; doListItems
-        case "7" => addElse; doCreateItem
+        case "1" => addElse; doListEmployees//
+        case "2" => addElse; doCreateEmployee//
+        case "3" => addElse; doDeleteEmployee//
+        case "4" => addElse; doListCustomers//
+        case "5" => addElse; doCreateCustomer//
+        case "6" => addElse; doListItems//
+        case "7" => addElse; doCreateItem//
         case "8" => addElse; doSetStock
         case "9" => addElse; doAddItemToBasket
         case "10" => addElse; doProcessBasket
-        case "11" => addElse; doListReceipts
-        case "12" => addElse; doListPreorders
-        case "13" => addElse; doTallyDay
-        case "14" => addElse; doTallyAllDays
-        case "15" => addElse; doForecast
-        case "16" => addElse; doNextDay
-        case "17" => addElse; doLogout
+        case "11" => addElse; doListReceipts//
+        case "12" => addElse; doListPreorders//
+        case "13" => addElse; doTallyDay//
+        case "14" => addElse; doTallyAllDays//
+        case "15" => addElse; doForecast//
+        case "16" => addElse; doNextDay//
+        case "17" => addElse; doLogout//
         case _ => println("w00t")
       }
     }
@@ -393,17 +398,36 @@ object Store {
 
     }
     def doSetStock: Unit = {
-
+      if (store.testIsManager) {
+        val ItemID = readLine("ItemID:\n")
+        val ItemStock = readLine("How many Stock would you like to add:\n")
+        store.addStock(ItemID,ItemStock.toInt)
+        doPrompt
+      } else {
+        println("You cannot create employees, please ask you manager")
+        doPrompt
+      }
     }
     def doAddItemToBasket: Unit = {
 
     }
     def doProcessBasket: Unit = {
+        val isUsingPoints = readLine("Is Customer Using Points to Purchase?\n Y/N\n")
+        var bool:Boolean = false
+          isUsingPoints match {
+            case y => bool = true
+            case n=>bool = false
+            case _=>println("Wrong Input: Please Try Again:\n");doProcessBasket
+          }
+        val buyingCustomer = readLine("Please Input Customer ID")
+        store.processBasket(bool,store.getPersonByID(buyingCustomer).asInstanceOf[Customer])
 
     }
     def doListReceipts: Unit = {
-
+      store.allReceipts()
+      doPrompt
     }
+
     def doListPreorders: Unit = {
 
     }
