@@ -7,6 +7,24 @@ class StoreTestSuite extends FunSuite {
   val store: Store = new Store
   store.init
 
+  test("store:tallyAllEarnings: tally the earnings since forever") {
+    val store = new Store
+    store.init
+    val item = store.getItemByName("Lara-Croft")
+    val customer = store.createCustomer("Cary")
+    customer.addToBasket(item)
+    store.processBasket(false, customer)
+    var tally = store.tallyAllEarnings
+    assert(tally == 40.00)
+    println(store.today)
+    store.nextDay
+    println(store.today)
+    customer.addToBasket(item)
+    store.processBasket(false, customer)
+    tally = store.tallyAllEarnings
+    assert(tally == 80.00)
+  }
+
   test("customer:addToBasket: test if we can add an Item to the basket") {
     val item = store.getItemByName("Lara-Croft")
     val customer = store.createCustomer("Cary")
@@ -30,6 +48,27 @@ class StoreTestSuite extends FunSuite {
     store.processBasket(false, customer)
     tally = store.tallyDayEarnings(store.today)
     assert(tally == 80.00)
+  }
+
+  test("store:forecastDaysEarnings: test the forecast") {
+    val store = new Store
+    store.init
+    val item = store.getItemByName("Lara-Croft")
+    val customer = store.createCustomer("Cary")
+    customer.addToBasket(item)
+    store.processBasket(false, customer)
+    var tally = store.tallyAllEarnings
+    assert(tally == 40.00)
+    println(store.today)
+    store.nextDay
+    println(store.today)
+    customer.addToBasket(item)
+    store.processBasket(false, customer)
+    tally = store.tallyAllEarnings
+    assert(tally == 80.00)
+    val forecast = store.forecastDaysEarnings
+    assert(forecast == 40.00)
+
   }
 
   test("store.readPersons: create some Persons from a file") {
