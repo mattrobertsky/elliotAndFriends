@@ -4,8 +4,6 @@
 import java.util.Calendar
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.regex.Pattern
-
 import scala.io.Source
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -13,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 class Store {
 
   var dayReceiptMap: Map[java.util.Date, ListBuffer[Reciept]] = Map[java.util.Date, ListBuffer[Reciept]]().empty
-  var preOrderMap = Map[java.util.Date, ListBuffer[Reciept]]().empty
+  var preOrderMap: Map[Date, ListBuffer[Reciept]] = Map[java.util.Date, ListBuffer[Reciept]]().empty
   var stockMap: Map[String, String] = Map[String, String]().empty
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
@@ -56,7 +54,7 @@ class Store {
     tallyAllEarnings / dayReceiptMap.keys.size
   }
 
-  def init: Unit = {
+  def init(): Unit = {
     this.readPersons()
     this.readItems()
   }
@@ -73,11 +71,11 @@ class Store {
     }
   }
 
-  def getPerson(personId: String) ={
+  def getPerson(personId: String): Person ={
     personMap(personId)
   }
 
-  def deletePerson(person: Person) = {
+  def deletePerson(person: Person): Option[Person] = {
     personMap.remove(person.id)
   }
 
@@ -113,11 +111,11 @@ class Store {
     }
   }
 
-  def login(employee: Employee) = {
+  def login(employee: Employee): Unit = {
     currentUser = Option(employee)
   }
 
-  def logout(employee: Employee) = {
+  def logout(employee: Employee): Unit = {
     currentUser = None
   }
 
@@ -190,15 +188,15 @@ class Store {
     var newTotal = total
     if (!usePoints) {
       val pointsTotal = newTotal / 10
-      updateCustomerPoints(custID, pointsTotal, true)
+      updateCustomerPoints(custID, pointsTotal, increment = true)
     } else {
       val customer: Customer = getPerson(custID).asInstanceOf[Customer]
       if (customer.rewardPoints > newTotal) {
-        updateCustomerPoints(custID, newTotal, false)
+        updateCustomerPoints(custID, newTotal, increment = false)
         newTotal = 0
       } else {
         newTotal -= customer.rewardPoints
-        updateCustomerPoints(custID, customer.rewardPoints, false)
+        updateCustomerPoints(custID, customer.rewardPoints, increment = false)
       }
     }
     newTotal
@@ -228,7 +226,7 @@ class Store {
     getItemByID(name).quantity -= amount
   }
 
-  private def getCal() = {
+  private def getCal = {
     val cal: Calendar = Calendar.getInstance()
     cal.set(Calendar.HOUR_OF_DAY, 0)
     cal.set(Calendar.MINUTE, 0)
@@ -237,7 +235,7 @@ class Store {
   }
 
   // this increments the local date
-  def nextDay: Unit = {
+  def nextDay(): Unit = {
     this.calendar.add(Calendar.DATE, 1)
   }
 
@@ -259,9 +257,8 @@ class Store {
     try {
       receiptsList = dayReceiptMap(this.today)
     } catch {
-      case e: NoSuchElementException => {
+      case e: NoSuchElementException =>
         dayReceiptMap += (this.today -> receiptsList)
-      }
 
     }
     receiptsList += reciept
@@ -278,17 +275,17 @@ class Store {
   }
 
   def checkIfPreOrder(date : String): Date ={
-    var Date = new SimpleDateFormat("dd/MM/yyyy").parse(date);
+    var Date = new SimpleDateFormat("dd/MM/yyyy").parse(date)
     Date
   }
 
-  def listItems() =
+  def listItems(): Unit =
   {
     println("Items: \n-----")
       itemsMap.foreach(x => println("Id " + x._2.id + " Available Date: " +x._2.availableDate + " Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
   }
 
-  def listEmp() =
+  def listEmp(): Unit =
   {
     println("Employees: \n---------")
     personMap.foreach(x =>
@@ -302,7 +299,7 @@ class Store {
 
   }
 
-  def listCus() =
+  def listCus(): Unit =
   {
     println("Customers: \n---------")
     personMap.foreach(x =>
@@ -315,7 +312,7 @@ class Store {
     )
   }
 
-  def receiptList() =
+  def receiptList(): Unit =
   {
     var Date = today
     val rList = dayReceiptMap(Date)
@@ -323,7 +320,7 @@ class Store {
   }
 
 
-  def allReceipts()={
+  def allReceipts(): Unit ={
 
     dayReceiptMap.foreach(x => x._2.foreach(y => println("Date: " + y.date + "\n" + printReciept(y))))
   }
@@ -335,26 +332,26 @@ object Store {
   def main(args: Array[String]): Unit = {
     val store = new Store
     var messageElse = ""
-    store.init
-    doLogin
+    store.init()
+    doLogin()
 
     def addElse = {
       messageElse = " else"
     }
 
-    def doLogin: Unit = {
+    def doLogin(): Unit = {
       val employeeId = readLine("Please login with your employee id\n")
       val employee = store.personMap(employeeId).asInstanceOf[Employee]
       store.login(employee)
       doPrompt
     }
-    def doLogout: Unit   = {
+    def doLogout(): Unit   = {
       store.currentUser = None
       println("congratulations you are now logged out, you may now enjoy a hard earned lunch,\n\n" +
               "providing Matt said it's ok...... \n\n which he probably didn't....\n\n " +
               "so get back to work fucker, no lunch for you.\n\n")
 
-      doLogin
+      doLogin()
     }
 
     def doPrompt: Unit = {
@@ -366,33 +363,33 @@ object Store {
         s"[16] close/open         [17]logout\n\n")
 
       taskId match {
-        case "1" => addElse; doListEmployees
-        case "2" => addElse; doCreateEmployee
-        case "3" => addElse; doDeleteEmployee
-        case "4" => addElse; doListCustomers
-        case "5" => addElse; doCreateCustomer
-        case "6" => addElse; doListItems
-        case "7" => addElse; doCreateItem
-        case "8" => addElse; doSetStock
-        case "9" => addElse; doAddItemToBasket
-        case "10" => addElse; doProcessBasket
-        case "11" => addElse; doListReceipts
-        case "12" => addElse; doHaveCoffee
-        case "13" => addElse; doTallyDay
-        case "14" => addElse; doTallyAllDays
-        case "15" => addElse; doForecast
-        case "16" => addElse; doNextDay
-        case "17" => addElse; doLogout
+        case "1" => addElse; doListEmployees()
+        case "2" => addElse; doCreateEmployee()
+        case "3" => addElse; doDeleteEmployee()
+        case "4" => addElse; doListCustomers()
+        case "5" => addElse; doCreateCustomer()
+        case "6" => addElse; doListItems()
+        case "7" => addElse; doCreateItem()
+        case "8" => addElse; doSetStock()
+        case "9" => addElse; doAddItemToBasket()
+        case "10" => addElse; doProcessBasket()
+        case "11" => addElse; doListReceipts()
+        case "12" => addElse; doHaveCoffee()
+        case "13" => addElse; doTallyDay()
+        case "14" => addElse; doTallyAllDays()
+        case "15" => addElse; doForecast()
+        case "16" => addElse; doNextDay()
+        case "17" => addElse; doLogout()
         case _ => println("we were wrong about usability... shutting down your store due to user error, all earnings are lost forever")
       }
     }
 
-    def doHaveCoffee:Unit = {
+    def doHaveCoffee():Unit = {
       println("make your own coffee dude")
       doPrompt
     }
 
-    def doDeleteEmployee: Unit = {
+    def doDeleteEmployee(): Unit = {
       if(store.testIsManager) {
         val empName = readLine("employee id:\n")
         val del = store.getPersonByID(empName)
@@ -404,22 +401,22 @@ object Store {
     }
 
 
-    def doListCustomers: Unit = {
+    def doListCustomers(): Unit = {
       store.listCus()
       doPrompt
     }
-    def doCreateCustomer: Unit = {
+    def doCreateCustomer(): Unit = {
 
         val name = readLine("customer name:\n")
         store.createCustomer(name)
         doPrompt
 
     }
-    def doListItems: Unit = {
+    def doListItems(): Unit = {
         store.listItems()
         doPrompt
     }
-    def doCreateItem: Unit = {
+    def doCreateItem(): Unit = {
       if (store.testIsManager) {
         val date = readLine("release date (DD/MM/YYYY: \n")
         val name = readLine("item name: \n")
@@ -435,7 +432,7 @@ object Store {
       }
 
     }
-    def doSetStock: Unit = {
+    def doSetStock(): Unit = {
       if (store.testIsManager) {
         val ItemID = readLine("item id:\n")
         val ItemStock = readLine("set stock to:\n")
@@ -446,7 +443,7 @@ object Store {
         doPrompt
       }
     }
-    def doAddItemToBasket: Unit = {
+    def doAddItemToBasket(): Unit = {
       val customerName = readLine("customer id : \n")
       val itemName = readLine("item id: \n")
       val customer = store.getPersonByID(customerName).asInstanceOf[Customer]
@@ -454,47 +451,47 @@ object Store {
       store.addItemToBasket(customer, item)
       doPrompt
     }
-    def doProcessBasket: Unit = {
+    def doProcessBasket(): Unit = {
       val buyingCustomer = readLine("customer id\n")
       val customer: Customer = store.getPersonByID(buyingCustomer).asInstanceOf[Customer]
         val isUsingPoints = readLine("Is Customer Using Points to Purchase?\n Y/N\n")
           isUsingPoints match {
-            case "n" =>  store.processBasket(false,customer)
-            case "y" =>  store.processBasket(true,customer)
-            case _=>println("Wrong Input: Please Try Again:\n");doProcessBasket
+            case "n" =>  store.processBasket(usePoints = false,customer)
+            case "y" =>  store.processBasket(usePoints = true,customer)
+            case _=>println("Wrong Input: Please Try Again:\n");doProcessBasket()
           }
         doPrompt
     }
-    def doListReceipts: Unit = {
+    def doListReceipts(): Unit = {
       store.allReceipts()
       doPrompt
     }
 
-    def doTallyDay: Unit = {
+    def doTallyDay(): Unit = {
       println(s"days earnings £${store.tallyDayEarnings(store.today)}")
       doPrompt
     }
-    def doTallyAllDays: Unit = {
+    def doTallyAllDays(): Unit = {
       println(s"total earnings £${store.tallyAllEarnings}")
       doPrompt
     }
-    def doForecast: Unit = {
+    def doForecast(): Unit = {
       println(s"forecast earnings £${store.forecastDaysEarnings}")
       doPrompt
     }
-    def doNextDay: Unit = {
-      store.nextDay
+    def doNextDay(): Unit = {
+      store.nextDay()
       println(s"it's a brand new day, shame you're still ugly.. ${store.today}")
       doPrompt
     }
 
-    def doListEmployees = {
+    def doListEmployees() = {
       println()
       store.listEmp()
       doPrompt
     }
 
-    def doCreateEmployee = {
+    def doCreateEmployee() = {
       if (store.testIsManager) {
         val name = readLine("name:\n")
         val isManager = readLine("is manager: Y/N\n")
