@@ -36,11 +36,12 @@ class Store {
   }
 
   def testIsManager: Boolean = {
+    var r = false
     if(currentUser.isDefined) {
       val empl:Employee = currentUser.get
-      return empl.isManager
+      r = empl.isManager
     }
-    false
+    r
   }
 
   def tallyAllEarnings: Double = {
@@ -469,7 +470,6 @@ object Store {
       store.allReceipts()
       doPrompt
     }
-
 
     def doTallyDay: Unit = {
       println(s"days earnings £${store.tallyDayEarnings(store.today)}")
