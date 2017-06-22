@@ -151,7 +151,10 @@ class Store {
       }
     }
 
-  //MAKE THIS METHOD TAKE CUSTOMER ID?
+  def addItemToBasket(customer: Customer, item: Item): Unit ={
+    customer.basket += item
+  }
+
   def processBasket(usePoints: Boolean, customer: Customer): Unit = {
 
     customer.basket.foreach(x => if(x.quantity == 0) {
@@ -314,6 +317,10 @@ class Store {
     rList.foreach(x=>println(printReciept(x)))
   }
 
+  def printPreOrders(): Unit ={
+    sortPreOrderReciepts()
+    preOrderMap.foreach(rec => rec._2.foreach(r => printReciept(r)))
+  }
 
   def sortPreOrderReciepts(): Unit ={
     var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
@@ -378,8 +385,12 @@ object Store {
     }
 
     def doDeleteEmployee: Unit = {
-
+        val empName = readLine("name:\n")
+        val del = store.getPersonByName(empName)
+        store.deletePerson(del)
     }
+
+
     def doListCustomers: Unit = {
 
     }
@@ -387,15 +398,35 @@ object Store {
 
     }
     def doListItems: Unit = {
-
+        store.listItems()
+        doPrompt
     }
     def doCreateItem: Unit = {
+      if (store.testIsManager) {
+        val date = readLine("release date: \n")
+        val name = readLine("item name: \n")
+        val cost = readLine("item cost: \n")
+        val itemType = readLine("item type: \n")
+        val quantity = readLine("item quantity: \n")
+
+        store.createItem(date,name,cost.toDouble,itemType,quantity.toInt)
+        doPrompt
+      } else {
+        println("You cannot create Items, please ask you manager")
+        doPrompt
+      }
 
     }
     def doSetStock: Unit = {
 
     }
     def doAddItemToBasket: Unit = {
+      val customerName = readLine("customer name : \n")
+      val itemName = readLine("item name: \n")
+      val customer = store.getPersonByName(customerName).asInstanceOf[Customer]
+      val item= store.getItemByName(itemName)
+      store.addItemToBasket(customer, item)
+      doPrompt
 
     }
     def doProcessBasket: Unit = {
@@ -405,7 +436,8 @@ object Store {
 
     }
     def doListPreorders: Unit = {
-
+        store.printPreOrders()
+        doPrompt
     }
     def doTallyDay: Unit = {
 
