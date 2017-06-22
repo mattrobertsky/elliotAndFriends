@@ -31,6 +31,14 @@ class Store {
     total
   }
 
+  def testIsManager: Boolean = {
+    if(currentUser.isDefined) {
+      val empl:Employee = currentUser.get
+      return empl.isManager
+    }
+    false
+  }
+
   def tallyAllEarnings: Double = {
     var total = 0.0
     for (key <- dayReceiptMap.keys) {
@@ -65,7 +73,11 @@ class Store {
   }
 
   def deletePerson(person: Person) = {
-    personMap.remove(person.id)
+    if(testIsManager) {
+      personMap.remove(person.id)
+    } else {
+      throw new Exception("you no manager")
+    }
   }
 
   def getPersonByID(id: String): Person ={
@@ -282,19 +294,28 @@ class Store {
 }
 
 object Store {
+
+  def doCreateEmployee = {
+
+  }
+
   def main(args: Array[String]): Unit = {
     val store = new Store
     store.init
-    val employeeId = readLine("Please login with your employee id\n")
-    val employee = store.personMap(employeeId)
-    val taskId = readLine(s"what would you like to do today ${employee.name}? \n\n" +
-      s"[1] list employees\n[2] get fucked\n")
+    def doPrompt: Unit = {
+      val employeeId = readLine("Please login with your employee id\n")
+      val employee = store.personMap(employeeId)
+      val taskId = readLine(s"what would you like to do today ${employee.name}? \n\n" +
+        s"[1] list employees\n[2] create employee\n[3] delete employee\n[4] get fucked\n\n")
 
-    taskId match {
-      case "1" => println("you want ot list empl")
-      case "2" => println("you want to get fucked")
-      case _ => println("w00t")
+      taskId match {
+        case "1" => println("you want ot list empl"); doPrompt
+        case "2" => doCreateEmployee
+        case "3" => println("you want ot list empl"); doPrompt
+        case "4" => println("you want to get fucked"); doPrompt
+        case _ => println("w00t")
+      }
     }
-
+    doPrompt
   }
 }

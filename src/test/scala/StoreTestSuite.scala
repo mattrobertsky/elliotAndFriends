@@ -121,6 +121,7 @@ class StoreTestSuite extends FunSuite {
     assert(store.currentUser.isDefined)
     store.logout(larry)
     store.deletePerson(larry)
+
   }
 
 
