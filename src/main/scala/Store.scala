@@ -331,27 +331,116 @@ class Store {
 
 object Store {
 
-  def doCreateEmployee = {
-
-  }
-
   def main(args: Array[String]): Unit = {
     val store = new Store
+    var messageElse = ""
     store.init
-    def doPrompt: Unit = {
+    doLogin
+
+    def addElse = {
+      messageElse = " else"
+    }
+
+    def doLogin: Unit = {
       val employeeId = readLine("Please login with your employee id\n")
-      val employee = store.personMap(employeeId)
-      val taskId = readLine(s"what would you like to do today ${employee.name}? \n\n" +
-        s"[1] list employees\n[2] create employee\n[3] delete employee\n[4] get fucked\n\n")
+      val employee = store.personMap(employeeId).asInstanceOf[Employee]
+      store.login(employee)
+      doPrompt
+    }
+
+    def doPrompt: Unit = {
+
+      val taskId = readLine(s"\nwhat$messageElse would you like to do today ${store.currentUser.get.name}? \n\n" +
+        s"[1] list employees\n[2] create employee\n[3] delete employee\n[4] list customers\n" +
+        s"[5] create customer\n[6] list items\n[7] create item\n[8] set stock\n[9] add item to basket\n" +
+        s"[10] process basket\n[11] list receipts\n[12] list preorders\n[13] tally day\n[14] total tally\n[15] forecast daily tally\n[16] close/open\n [17]logout\n\n")
 
       taskId match {
-        case "1" => println("you want ot list empl"); doPrompt
-        case "2" => doCreateEmployee
-        case "3" => println("you want ot list empl"); doPrompt
-        case "4" => println("you want to get fucked"); doPrompt
+        case "1" => addElse; doListEmployees
+        case "2" => addElse; doCreateEmployee
+        case "3" => addElse; doDeleteEmployee
+        case "4" => addElse; doListCustomers
+        case "5" => addElse; doCreateCustomer
+        case "6" => addElse; doListItems
+        case "7" => addElse; doCreateItem
+        case "8" => addElse; doSetStock
+        case "9" => addElse; doAddItemToBasket
+        case "10" => addElse; doProcessBasket
+        case "11" => addElse; doListReceipts
+        case "12" => addElse; doListPreorders
+        case "13" => addElse; doTallyDay
+        case "14" => addElse; doTallyAllDays
+        case "15" => addElse; doForecast
+        case "16" => addElse; doNextDay
+        case "17" => addElse; doLogout
         case _ => println("w00t")
       }
     }
-    doPrompt
+
+    def doDeleteEmployee: Unit = {
+
+    }
+    def doListCustomers: Unit = {
+
+    }
+    def doCreateCustomer: Unit = {
+
+    }
+    def doListItems: Unit = {
+
+    }
+    def doCreateItem: Unit = {
+
+    }
+    def doSetStock: Unit = {
+
+    }
+    def doAddItemToBasket: Unit = {
+
+    }
+    def doProcessBasket: Unit = {
+
+    }
+    def doListReceipts: Unit = {
+
+    }
+    def doListPreorders: Unit = {
+
+    }
+    def doTallyDay: Unit = {
+
+    }
+    def doTallyAllDays: Unit = {
+
+    }
+    def doForecast: Unit = {
+
+    }
+    def doNextDay: Unit = {
+
+    }
+    def doLogout: Unit   = {
+
+    }
+
+    def doListEmployees = {
+      println()
+      store.listEmp()
+      doPrompt
+    }
+
+
+    def doCreateEmployee = {
+      if (store.testIsManager) {
+        val name = readLine("name:\n")
+        val isManager = readLine("is manager: Y/N\n")
+        store.createEmployee(name, isManager.equalsIgnoreCase("y"))
+        doPrompt
+      } else {
+        println("You cannot create employees, please ask you manager")
+        doPrompt
+      }
+    }
+
   }
 }
