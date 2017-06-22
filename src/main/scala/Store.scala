@@ -327,7 +327,7 @@ class Store {
   }
   def allReceipts()={
 
-    dayReceiptMap.foreach(x => x._2.foreach(y => println("Date: " + x._1 + "\n" + printReciept(y))))
+    dayReceiptMap.foreach(x => x._2.foreach(y => println("Date: " + y.date + "\n" + printReciept(y))))
   }
 
 
@@ -365,9 +365,9 @@ object Store {
     }
     def doLogout: Unit   = {
       store.currentUser = None
-      println("congratulations you are now logged out, you may now enjoy a hard earned lunch," +
-              " providing Mat said it's ok...... \n \n \n which he probably didn't....\n\n\n " +
-               "so get back to work fucker, no lunch for you.\n\n")
+      println("congratulations you are now logged out, you may now enjoy a hard earned lunch,\n\n" +
+              "providing Matt said it's ok...... \n\n which he probably didn't....\n\n " +
+              "so get back to work fucker, no lunch for you.\n\n")
 
       doLogin
     }
@@ -403,10 +403,14 @@ object Store {
     }
 
     def doDeleteEmployee: Unit = {
+      if(store.testIsManager) {
         val empName = readLine("employee id:\n")
         val del = store.getPersonByID(empName)
         store.deletePerson(del)
-        doPrompt
+      } else {
+        println("DENIED.... you are no manager and never will be")
+      }
+      doPrompt
     }
 
 
@@ -415,14 +419,10 @@ object Store {
       doPrompt
     }
     def doCreateCustomer: Unit = {
-      if (store.testIsManager) {
+
         val name = readLine("customer name:\n")
         store.createCustomer(name)
         doPrompt
-      } else {
-        println("YOU SHALL NOT PASS....because you aren't a manager")
-        doPrompt
-      }
 
     }
     def doListItems: Unit = {
@@ -440,7 +440,7 @@ object Store {
         store.createItem(date,name,cost.toDouble,itemType,quantity.toInt)
         doPrompt
       } else {
-        println("You cannot create Items, please ask you manager")
+        println("NO FOOL... go get you boss")
         doPrompt
       }
 
@@ -450,10 +450,9 @@ object Store {
         val ItemID = readLine("item id:\n")
         val ItemStock = readLine("set stock to:\n")
         store.updateItemQuantity(ItemID,ItemStock.toInt)
-//        store.addStock(ItemID,ItemStock.toInt)
         doPrompt
       } else {
-        println("You cannot create employees, please ask you manager")
+        println("ACESS DENIED... blah blah something witty")
         doPrompt
       }
     }
@@ -491,11 +490,11 @@ object Store {
       doPrompt
     }
     def doTallyAllDays: Unit = {
-      println(s"total earnings£${store.tallyAllEarnings}")
+      println(s"total earnings £${store.tallyAllEarnings}")
       doPrompt
     }
     def doForecast: Unit = {
-      println(s"forcast earnings £${store.forecastDaysEarnings}")
+      println(s"forecast earnings £${store.forecastDaysEarnings}")
       doPrompt
     }
     def doNextDay: Unit = {
@@ -509,7 +508,6 @@ object Store {
       store.listEmp()
       doPrompt
     }
-//
 
     def doCreateEmployee = {
       if (store.testIsManager) {
