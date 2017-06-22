@@ -24,9 +24,13 @@ class Store {
 
   def tallyDayEarnings(date: java.util.Date): Double = {
     var total = 0.0
-    val receipts: ListBuffer[Reciept] = dayReceiptMap(date)
-    for (receipt <- receipts) {
-      total += receipt.totalPrice
+    try {
+      val receipts: ListBuffer[Reciept] = dayReceiptMap(date)
+      for (receipt <- receipts) {
+        total += receipt.totalPrice
+      }
+    } catch {
+      case e: NoSuchElementException => // do nowt
     }
     total
   }
@@ -347,13 +351,22 @@ object Store {
       store.login(employee)
       doPrompt
     }
+    def doLogout: Unit   = {
+      store.currentUser = None
+      println("congratulations you are now logged out, you may now enjoy a hard earned lunch," +
+              " providing Mat said it's ok...... \n \n \n which he probably didn't....\n\n\n " +
+               "so get back to work fucker, no lunch for you.\n\n")
+
+      doLogin
+    }
 
     def doPrompt: Unit = {
 
       val taskId = readLine(s"\nwhat$messageElse would you like to do today ${store.currentUser.get.name}? \n\n" +
-        s"[1] list employees\n[2] create employee\n[3] delete employee\n[4] list customers\n" +
-        s"[5] create customer\n[6] list items\n[7] create item\n[8] set stock\n[9] add item to basket\n" +
-        s"[10] process basket\n[11] list receipts\n[12] list preorders\n[13] tally day\n[14] total tally\n[15] forecast daily tally\n[16] close/open\n [17]logout\n\n")
+        s"[1] list employees      [4] list customers     [7] create item         [10] process basket  [13] tally day \n" +
+        s"[2] create employee     [5] create customer    [8] set stock           [11] list receipts   [14] total tally\n" +
+        s"[3] delete employee     [6] list items         [9] add item to basket  [12] list preorders  [15] forecast daily tally\n\n" +
+        s"[16] close/open         [17]logout\n\n")
 
       taskId match {
         case "1" => addElse; doListEmployees
@@ -373,7 +386,7 @@ object Store {
         case "15" => addElse; doForecast
         case "16" => addElse; doNextDay
         case "17" => addElse; doLogout
-        case _ => println("w00t")
+        case _ => println("no such thing... shutting down your store due to user error")
       }
     }
 
@@ -408,19 +421,21 @@ object Store {
 
     }
     def doTallyDay: Unit = {
-
+      println(s"days earnings £${store.tallyDayEarnings(store.today)}")
+      doPrompt
     }
     def doTallyAllDays: Unit = {
-
+      println(s"total earnings£${store.tallyAllEarnings}")
+      doPrompt
     }
     def doForecast: Unit = {
-
+      println(s"forcast earnings £${store.forecastDaysEarnings}")
+      doPrompt
     }
     def doNextDay: Unit = {
-
-    }
-    def doLogout: Unit   = {
-
+      store.nextDay
+      println(s"it's a brand new day, shame you're still ugly.. ${store.today}")
+      doPrompt
     }
 
     def doListEmployees = {
@@ -437,7 +452,7 @@ object Store {
         store.createEmployee(name, isManager.equalsIgnoreCase("y"))
         doPrompt
       } else {
-        println("You cannot create employees, please ask you manager")
+        println("ACCESS DENIED... jog on")
         doPrompt
       }
     }
