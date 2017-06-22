@@ -274,7 +274,7 @@ class Store {
     reciept.itemList.foreach(x => str +=  "- " + x.name + "  £" + f"${x.cost}%.2f" +
       {if(checkIfPreOrder(x.availableDate).after(today)){reciept.isPreOrder = true; " (Pre-order)"} else {""}}
       + "\n")
-    "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: £" + f"${reciept.totalPrice}%.2f" + "\n\nNew Points Total: " + customer.rewardPoints + "\n\n--- END OF RECIEPT ---\n\n"
+    "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: £" + f"${reciept.totalPrice}%.2f" + "\n\nNew Points Total: " + getPersonByID(reciept.customerID).asInstanceOf[Customer].rewardPoints + "\n\n--- END OF RECIEPT ---\n\n"
   }
 
   def checkIfPreOrder(date : String): Date ={
@@ -285,7 +285,7 @@ class Store {
   def listItems() =
   {
     println("Items: \n-----")
-      itemsMap.foreach(x => println("Id " + x._2.id + " Available Date: " +x._2.availableDate + " Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
+      itemsMap.foreach(x => println("Id " + x._2.id + " Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
   }
 
   def listEmp() =
@@ -455,15 +455,14 @@ object Store {
       doPrompt
     }
     def doProcessBasket: Unit = {
+      val buyingCustomer = readLine("customer id\n")
+      val customer: Customer = store.getPersonByID(buyingCustomer).asInstanceOf[Customer]
         val isUsingPoints = readLine("Is Customer Using Points to Purchase?\n Y/N\n")
-        var bool:Boolean = false
           isUsingPoints match {
-            case y => bool = true
-            case n=>bool = false
+            case "n" =>  store.processBasket(false,customer)
+            case "y" =>  store.processBasket(true,customer)
             case _=>println("Wrong Input: Please Try Again:\n");doProcessBasket
           }
-        val buyingCustomer = readLine("customer id\n")
-        store.processBasket(bool,store.getPersonByID(buyingCustomer).asInstanceOf[Customer])
         doPrompt
     }
     def doListReceipts: Unit = {
