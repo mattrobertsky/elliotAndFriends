@@ -183,7 +183,6 @@ class StoreTestSuite extends FunSuite {
 
   test("Store.receiptList: should print out all the receipts in dailyreceiptList with given date"){
     store.receiptList()
-
   }
 
 

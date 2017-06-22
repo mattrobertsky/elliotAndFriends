@@ -314,7 +314,7 @@ class Store {
     )
   }
 
-  def receiptList(date:String) =
+  def receiptList() =
   {
     var Date = today
     val rList = dayReceiptMap(Date)
@@ -410,9 +410,18 @@ object Store {
 
 
     def doListCustomers: Unit = {
-
+      store.listCus()
+      doPrompt
     }
     def doCreateCustomer: Unit = {
+      if (store.testIsManager) {
+        val name = readLine("customer name:\n")
+        store.createCustomer(name)
+        doPrompt
+      } else {
+        println("YOU SHALL NOT PASS....because you aren't a manager")
+        doPrompt
+      }
 
     }
     def doListItems: Unit = {
