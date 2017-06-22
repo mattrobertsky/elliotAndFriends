@@ -275,7 +275,7 @@ class Store {
     var Date = new SimpleDateFormat("dd/MM/yyyy").parse(date);
     Date
   }
-}
+
 
   def sortPreOrderReciepts(): Unit ={
     var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
