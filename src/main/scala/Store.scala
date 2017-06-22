@@ -43,7 +43,7 @@ class Store {
     tallyAllEarnings / dayReceiptMap.keys.size
   }
 
-  def init: Unit = {
+  def init(): Unit = {
     this.readPersons()
     this.readItems()
   }
@@ -73,9 +73,8 @@ class Store {
   }
 
   def checkIfManager(): Boolean = {
-    val person = currentUser.asInstanceOf[Employee]
-    if(person.isManager){
-      true
+    if(currentUser.isDefined){
+      return currentUser.get.isManager
     }else{
       false
     }
@@ -108,7 +107,6 @@ class Store {
       customer
     }else{
       throw new Exception ("Manager Access required")}
-
   }
 
   def updateCustomerPoints(id: String, points: Int, increment: Boolean): Unit ={
