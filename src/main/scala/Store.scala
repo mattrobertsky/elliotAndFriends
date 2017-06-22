@@ -284,7 +284,7 @@ class Store {
   def listItems() =
   {
     println("Items: \n-----")
-      itemsMap.foreach(x => println("Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
+      itemsMap.foreach(x => println("Id " + x._2.id + " Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
   }
 
   def listEmp() =
@@ -295,7 +295,7 @@ class Store {
       {
         case false =>
         case true =>
-        println("Employee ID: " + x._2.id)
+        println("Employee ID: " + x._2.id + " name: " + x._2.name + " isManager: " + x._2.asInstanceOf[Employee].isManager)
       }
     )
 
@@ -309,7 +309,7 @@ class Store {
       {
       case false =>
       case true =>
-        println("Customer ID: " + x._2.id)
+        println("Customer ID: " + x._2.id + " name: " + x._2.name + " reward points: " + x._2.asInstanceOf[Customer].rewardPoints)
       }
     )
   }
@@ -398,14 +398,15 @@ object Store {
         case "15" => addElse; doForecast
         case "16" => addElse; doNextDay
         case "17" => addElse; doLogout
-        case _ => println("no such thing... shutting down your store due to user error")
+        case _ => println("we were wrong about usability... shutting down your store due to user error, all earnings are lost forever")
       }
     }
 
     def doDeleteEmployee: Unit = {
-        val empName = readLine("name:\n")
-        val del = store.getPersonByName(empName)
+        val empName = readLine("employee id:\n")
+        val del = store.getPersonByID(empName)
         store.deletePerson(del)
+        doPrompt
     }
 
 
@@ -430,10 +431,10 @@ object Store {
     }
     def doCreateItem: Unit = {
       if (store.testIsManager) {
-        val date = readLine("release date: \n")
+        val date = readLine("release date (DD/MM/YYYY: \n")
         val name = readLine("item name: \n")
         val cost = readLine("item cost: \n")
-        val itemType = readLine("item type: \n")
+        val itemType = readLine("item type (game/misc/hardware: \n") // TODO future proof Alok..
         val quantity = readLine("item quantity: \n")
 
         store.createItem(date,name,cost.toDouble,itemType,quantity.toInt)
@@ -446,9 +447,10 @@ object Store {
     }
     def doSetStock: Unit = {
       if (store.testIsManager) {
-        val ItemID = readLine("ItemID:\n")
-        val ItemStock = readLine("How many Stock would you like to add:\n")
-        store.addStock(ItemID,ItemStock.toInt)
+        val ItemID = readLine("item id:\n")
+        val ItemStock = readLine("set stock to:\n")
+        store.updateItemQuantity(ItemID,ItemStock.toInt)
+//        store.addStock(ItemID,ItemStock.toInt)
         doPrompt
       } else {
         println("You cannot create employees, please ask you manager")
@@ -456,13 +458,12 @@ object Store {
       }
     }
     def doAddItemToBasket: Unit = {
-      val customerName = readLine("customer name : \n")
-      val itemName = readLine("item name: \n")
-      val customer = store.getPersonByName(customerName).asInstanceOf[Customer]
-      val item= store.getItemByName(itemName)
+      val customerName = readLine("customer id : \n")
+      val itemName = readLine("item id: \n")
+      val customer = store.getPersonByID(customerName).asInstanceOf[Customer]
+      val item= store.getItemByID(itemName)
       store.addItemToBasket(customer, item)
       doPrompt
-
     }
     def doProcessBasket: Unit = {
         val isUsingPoints = readLine("Is Customer Using Points to Purchase?\n Y/N\n")
@@ -472,9 +473,9 @@ object Store {
             case n=>bool = false
             case _=>println("Wrong Input: Please Try Again:\n");doProcessBasket
           }
-        val buyingCustomer = readLine("Please Input Customer ID")
+        val buyingCustomer = readLine("customer id\n")
         store.processBasket(bool,store.getPersonByID(buyingCustomer).asInstanceOf[Customer])
-
+        doPrompt
     }
     def doListReceipts: Unit = {
       store.allReceipts()
