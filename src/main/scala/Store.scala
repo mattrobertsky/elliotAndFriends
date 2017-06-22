@@ -4,6 +4,7 @@
 import java.util.Calendar
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.regex.Pattern
 
 import scala.io.Source
 import scala.collection.mutable
@@ -48,11 +49,8 @@ class Store {
   }
 
   def readPersons(): Unit = {
-    println("in readPersons " + pathToPersons)
     for (line <- Source.fromFile(pathToPersons).getLines) {
-      println(line)
       val args = line.split(",")
-      println(args)
       if (args(0) == "customer") {
         createCustomer(args(1))
       } else {
@@ -139,7 +137,6 @@ class Store {
   }
 
   def readItems(): Unit = {
-    println("in readItems " + pathToItems)
     for (line <- Source.fromFile(pathToItems).getLines) {
       val args = line.split(",")
       createItem(args(0), args(1), args(2).toDouble, args(3), args(4).toInt)
@@ -245,20 +242,14 @@ class Store {
     var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
     try {
       receiptsList = dayReceiptMap(this.today)
-      println("in try")
     } catch {
       case e: NoSuchElementException => {
         dayReceiptMap += (this.today -> receiptsList)
-        println("in catch")// TODO refactor using Option
       }
 
     }
     receiptsList += reciept
-    println("receiptList size " + receiptsList.size)
     dayReceiptMap += (this.today -> receiptsList)
-    println("dayReciptMap " + dayReceiptMap.mkString)
-//    dayReceiptMap += (today -> reciept)
-    println(printReciept(reciept))
   }
 
   def printReciept(reciept:Reciept): String ={
@@ -276,7 +267,6 @@ class Store {
     Date
   }
 
-
   def sortPreOrderReciepts(): Unit ={
     var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
     dayReceiptMap.foreach(reciept => reciept._2.foreach(r => if(r.isPreOrder){
@@ -289,5 +279,22 @@ class Store {
     }
   }
 
+}
 
+object Store {
+  def main(args: Array[String]): Unit = {
+    val store = new Store
+    store.init
+    val employeeId = readLine("Please login with your employee id\n")
+    val employee = store.personMap(employeeId)
+    val taskId = readLine(s"what would you like to do today ${employee.name}? \n\n" +
+      s"[1] list employees\n[2] get fucked\n")
+
+    taskId match {
+      case "1" => println("you want ot list empl")
+      case "2" => println("you want to get fucked")
+      case _ => println("w00t")
+    }
+
+  }
 }
