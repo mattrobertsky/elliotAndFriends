@@ -7,6 +7,24 @@ class StoreTestSuite extends FunSuite {
   val store: Store = new Store
   store.init
 
+  test("store:tallyAllEarnings: tally the earnings since forever") {
+    val store = new Store
+    store.init
+    val item = store.getItemByName("Lara-Croft")
+    val customer = store.createCustomer("Cary")
+    customer.addToBasket(item)
+    store.processBasket(false, customer)
+    var tally = store.tallyAllEarnings
+    assert(tally == 40.00)
+    println(store.today)
+    store.nextDay
+    println(store.today)
+    customer.addToBasket(item)
+    store.processBasket(false, customer)
+    tally = store.tallyAllEarnings
+    assert(tally == 80.00)
+  }
+
   test("customer:addToBasket: test if we can add an Item to the basket") {
     val item = store.getItemByName("Lara-Croft")
     val customer = store.createCustomer("Cary")
@@ -30,6 +48,27 @@ class StoreTestSuite extends FunSuite {
     store.processBasket(false, customer)
     tally = store.tallyDayEarnings(store.today)
     assert(tally == 80.00)
+  }
+
+  test("store:forecastDaysEarnings: test the forecast") {
+    val store = new Store
+    store.init
+    val item = store.getItemByName("Lara-Croft")
+    val customer = store.createCustomer("Cary")
+    customer.addToBasket(item)
+    store.processBasket(false, customer)
+    var tally = store.tallyAllEarnings
+    assert(tally == 40.00)
+    println(store.today)
+    store.nextDay
+    println(store.today)
+    customer.addToBasket(item)
+    store.processBasket(false, customer)
+    tally = store.tallyAllEarnings
+    assert(tally == 80.00)
+    val forecast = store.forecastDaysEarnings
+    assert(forecast == 40.00)
+
   }
 
   test("store.readPersons: create some Persons from a file") {
@@ -68,6 +107,13 @@ class StoreTestSuite extends FunSuite {
     store.deletePerson(getMe)
   }
 
+  test("store.updateCustomerPoints: change reward points of the customer") {
+    val original = store.createCustomer("Barry")
+    val originalPoints = original.rewardPoints
+    store.updateCustomerPoints(original.id, 10, true)
+    assert(originalPoints != original.rewardPoints)
+    store.deletePerson(original)
+  }
   test("store.login: employee can loginto system") {
     assert(!store.currentUser.isDefined)
     val larry = store.createEmployee("Larry", true)
@@ -75,6 +121,7 @@ class StoreTestSuite extends FunSuite {
     assert(store.currentUser.isDefined)
     store.logout(larry)
     store.deletePerson(larry)
+
   }
 
 
@@ -129,13 +176,16 @@ class StoreTestSuite extends FunSuite {
     assert(store.calcTotal(customerBasket) == compareTotal)
   }
 
-   //item, cost 0.0, isPreorder true/false
-//  test("Store.sellItem: Sell  more items than are in stock") {
-//    var customerBasket = List(store.getItemByName("Monster Hunter"))
-//    store.getItemByName("Monster Hunter").quantity = 0
-//    store.sellItems(customerBasket, false, "CUS-1")
-//    assert(store.getItemByName("Monster Hunter").quantity == 0)
-//  }
+  test("Store.sellItem: Sell  more items than are in stock") {
+    val item = store.getItemByName("Monster Hunter")
+    var originalM = item.quantity
+    //    store.sellItems(customerBasket,false, "CUS-1")
+    val customer: Customer = store.getPerson("CUS-1").asInstanceOf[Customer]
+    customer.addToBasket(item)
+    store.getItemByName("Monster Hunter").quantity = 0
+    store.processBasket(false, customer)
+    assert(store.getItemByName("Monster Hunter").quantity == 0)
+  }
 
 
   test("Store.receiptList: should print out all the receipts in dailyreceiptList"){
@@ -199,7 +249,6 @@ class StoreTestSuite extends FunSuite {
   }
 
   test("Store.updateItems: update Items from a file") {
-    //println(store.itemsMap.size)
     store.updateItemCost("Monster Hunter", 50.00)
     store.updateItemQuantity("Monster Hunter", 200)
     store.updateItemDate("Monster Hunter", "11/06/2019")
@@ -207,7 +256,9 @@ class StoreTestSuite extends FunSuite {
 
     assert(store.getItemByName("Monster-Hunter-Remastered").quantity == 200)
     assert(store.getItemByName("Monster-Hunter-Remastered").cost == 50.00)
-    //assert(store.getItemByName("Monster-Hunter-Remastered").availableDate.after(2019-6-11))
+    var date = store.checkIfPreOrder(store.getItemByName("Monster-Hunter-Remastered").availableDate)
+    var date2 = store.checkIfPreOrder("05/11/2019")
+    assert(date.after(date2))
     //FIX DATE
   }
 }
