@@ -11,6 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 class Store {
   var dayReceiptMap: Map[java.util.Date, ListBuffer[Reciept]] = Map[java.util.Date, ListBuffer[Reciept]]().empty
+  var preOrderMap = Map[java.util.Date, ListBuffer[Reciept]]().empty
   var stockMap: Map[String, String] = Map[String, String]().empty
   var itemsMap: mutable.Map[String, Item] = mutable.Map[String, Item]().empty
   var personMap: mutable.Map[String, Person] = mutable.Map[String, Person]().empty
@@ -58,6 +59,16 @@ class Store {
 
   def deletePerson(person: Person) = {
     personMap.remove(person.id)
+  }
+
+  def getPersonByID(id: String): Person ={
+    personMap(id)
+  }
+
+  def getPersonByName(name: String): Person = {
+    var r = ""
+    personMap.keys.foreach{person => if(personMap(person).name.equals(name)){ r = person }}
+    getPersonByID(r)
   }
 
 
@@ -137,10 +148,7 @@ class Store {
     if(customer.basket.size <=0) {
       println("All items out of stock. Transaction cancelled.")
     } else {
-
       val total = calcTotal(customer.basket.toList)
-      //    val total = calcTotal(basket)
-      //    val points = calcPoints(total.toInt, customer.id, usePoints)
       calcPoints(total.toInt, customer.id, usePoints)
 
       addReciept(customer.id, customer.basket.toList, total)
@@ -239,8 +247,9 @@ class Store {
   def printReciept(reciept:Reciept): String ={
     var str: String = ""
     val customer:Customer = getPerson(reciept.customerID).asInstanceOf[Customer]
+
     reciept.itemList.foreach(x => str +=  "- " + x.name + "  £" + f"${x.cost}%.2f" +
-      {if(checkIfPreOrder(x.availableDate).after(today)){" (Pre-order)"} else {""}}
+      {if(checkIfPreOrder(x.availableDate).after(today)){reciept.isPreOrder = true; " (Pre-order)"} else {""}}
       + "\n")
     "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: £" + f"${reciept.totalPrice}%.2f" + "\n\nNew Points Total: " + customer.rewardPoints + "\n\n--- END OF RECIEPT ---\n\n"
   }
@@ -248,6 +257,18 @@ class Store {
   def checkIfPreOrder(date : String): Date ={
     var Date = new SimpleDateFormat("dd/MM/yyyy").parse(date);
     Date
+  }
+
+  def sortPreOrderReciepts(): Unit ={
+    var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
+    dayReceiptMap.foreach(reciept => reciept._2.foreach(r => if(r.isPreOrder){
+      receiptsList+= r
+    }))
+    try {
+      receiptsList = preOrderMap(this.today)
+    } catch {
+      case e: NoSuchElementException => preOrderMap += (this.today -> receiptsList) // TODO refactor using Option
+    }
   }
 
 
