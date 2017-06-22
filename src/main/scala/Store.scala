@@ -152,8 +152,8 @@ class Store {
     for (line <- Source.fromFile(pathToItems).getLines) {
       val args = line.split(",")
       createItem(args(0), args(1), args(2).toDouble, args(3), args(4).toInt)
-      }
     }
+  }
 
   def addItemToBasket(customer: Customer, item: Item): Unit ={
     customer.basket += item
@@ -284,7 +284,7 @@ class Store {
   def listItems() =
   {
     println("Items: \n-----")
-      itemsMap.foreach(x => println("Id " + x._2.id + " Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
+      itemsMap.foreach(x => println("Id " + x._2.id + " Available Date: " +x._2.availableDate + " Type: " + x._2.itemType + "  Product: " + x._2.name + "  Cost: £" + f"${x._2.cost}%.2f" + "  Qty: " + x._2.quantity + "\n"))
   }
 
   def listEmp() =
@@ -321,26 +321,10 @@ class Store {
     rList.foreach(x=>println(printReciept(x)))
   }
 
-  def printPreOrders(): Unit ={
-    sortPreOrderReciepts()
-    preOrderMap.foreach(rec => rec._2.foreach(r => printReciept(r)))
-  }
+
   def allReceipts()={
 
     dayReceiptMap.foreach(x => x._2.foreach(y => println("Date: " + y.date + "\n" + printReciept(y))))
-  }
-
-
-  def sortPreOrderReciepts(): Unit ={
-    var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
-    dayReceiptMap.foreach(reciept => reciept._2.foreach(r => if(r.isPreOrder){
-      receiptsList+= r
-    }))
-    try {
-      receiptsList = preOrderMap(this.today)
-    } catch {
-      case e: NoSuchElementException => preOrderMap += (this.today -> receiptsList) // TODO refactor using Option
-    }
   }
 
 }
@@ -377,7 +361,7 @@ object Store {
       val taskId = readLine(s"\nwhat$messageElse would you like to do today ${store.currentUser.get.name}? \n\n" +
         s"[1] list employees      [4] list customers     [7] create item         [10] process basket  [13] tally day \n" +
         s"[2] create employee     [5] create customer    [8] set stock           [11] list receipts   [14] total tally\n" +
-        s"[3] delete employee     [6] list items         [9] add item to basket  [12] list preorders  [15] forecast daily tally\n\n" +
+        s"[3] delete employee     [6] list items         [9] add item to basket  [12] have coffee     [15] forecast daily tally\n\n" +
         s"[16] close/open         [17]logout\n\n")
 
       taskId match {
@@ -392,7 +376,7 @@ object Store {
         case "9" => addElse; doAddItemToBasket
         case "10" => addElse; doProcessBasket
         case "11" => addElse; doListReceipts
-        case "12" => addElse; doListPreorders
+        case "12" => addElse; doHaveCoffee
         case "13" => addElse; doTallyDay
         case "14" => addElse; doTallyAllDays
         case "15" => addElse; doForecast
@@ -400,6 +384,11 @@ object Store {
         case "17" => addElse; doLogout
         case _ => println("we were wrong about usability... shutting down your store due to user error, all earnings are lost forever")
       }
+    }
+
+    def doHaveCoffee:Unit = {
+      println("make your own coffee dude")
+      doPrompt
     }
 
     def doDeleteEmployee: Unit = {
@@ -481,10 +470,7 @@ object Store {
       doPrompt
     }
 
-    def doListPreorders: Unit = {
-        store.printPreOrders()
-        doPrompt
-    }
+
     def doTallyDay: Unit = {
       println(s"days earnings £${store.tallyDayEarnings(store.today)}")
       doPrompt
