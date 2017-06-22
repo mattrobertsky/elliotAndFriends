@@ -65,7 +65,20 @@ class Store {
   }
 
   def deletePerson(person: Person) = {
-    personMap.remove(person.id)
+    if(checkIfManager()){
+      personMap.remove(person.id)
+    }else{
+      throw new Exception ("Manager Access required")}
+
+  }
+
+  def checkIfManager(): Boolean = {
+    val person = currentUser.asInstanceOf[Employee]
+    if(person.isManager){
+      true
+    }else{
+      false
+    }
   }
 
   def getPersonByID(id: String): Person ={
@@ -80,15 +93,22 @@ class Store {
 
 
   def createEmployee(someName: String, isManager: Boolean): Employee =  {
-    val employee = new Employee(someName, isManager)
-    personMap(employee.id) = employee
-    employee
+    if(checkIfManager()){
+      val employee = new Employee(someName, isManager)
+      personMap(employee.id) = employee
+      employee
+    }else{
+      throw new Exception ("Manager Access required")}
   }
 
   def createCustomer(someName: String): Customer =  {
-    val customer = new Customer(someName)
-    personMap(customer.id) = customer
-    customer
+    if(checkIfManager()){
+      val customer = new Customer(someName)
+      personMap(customer.id) = customer
+      customer
+    }else{
+      throw new Exception ("Manager Access required")}
+
   }
 
   def updateCustomerPoints(id: String, points: Int, increment: Boolean): Unit ={
