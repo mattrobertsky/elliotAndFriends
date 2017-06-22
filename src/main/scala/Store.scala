@@ -104,11 +104,11 @@ class Store {
   }
 
   def updateCustomerPoints(id: String, points: Int, increment: Boolean): Unit ={
-    val customer: Customer = getPerson(id).asInstanceOf[Customer]
+    //val customer: Customer = getPerson(id).asInstanceOf[Customer]
     if(increment) {
-      customer.rewardPoints += points
+      getPerson(id).asInstanceOf[Customer].rewardPoints += points
     } else {
-      customer.rewardPoints -= points
+      getPerson(id).asInstanceOf[Customer].rewardPoints -= points
     }
   }
 
@@ -160,7 +160,7 @@ class Store {
   }
 
   def processBasket(usePoints: Boolean, customer: Customer): Unit = {
-
+    println("USE POINTS IN PROCESSBASKET: "+usePoints)
     customer.basket.foreach(x => if(x.quantity == 0) {
       customer.basket -= x
       println("Item: "+x.name+ " is out of stock and has been removed from basket")
@@ -186,6 +186,7 @@ class Store {
   }
 
   def calcPoints(total: Int, custID: String, usePoints: Boolean): Int = {
+    println("USE POINTS IN CALCPOINTS: "+usePoints)
     var newTotal = total
     if (!usePoints) {
       val pointsTotal = newTotal / 10
@@ -269,11 +270,11 @@ class Store {
 
   def printReciept(reciept:Reciept): String ={
     var str: String = ""
-    val customer:Customer = getPerson(reciept.customerID).asInstanceOf[Customer]
+    //val customer:Customer = getPerson(reciept.customerID).asInstanceOf[Customer]
     reciept.itemList.foreach(x => str +=  "- " + x.name + "  £" + f"${x.cost}%.2f" +
       {if(checkIfPreOrder(x.availableDate).after(today)){reciept.isPreOrder = true; " (Pre-order)"} else {""}}
       + "\n")
-    "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: £" + f"${reciept.totalPrice}%.2f" + "\n\nNew Points Total: " + customer.rewardPoints + "\n\n--- END OF RECIEPT ---\n\n"
+    "Customer: " + reciept.customerID + "\n\nItems: \n" + str + "\nTotal Price: £" + f"${reciept.totalPrice}%.2f" + "\n\nNew Points Total: " + getPersonByID(reciept.customerID).asInstanceOf[Customer].rewardPoints + "\n\n--- END OF RECIEPT ---\n\n"
   }
 
   def checkIfPreOrder(date : String): Date ={
@@ -323,7 +324,10 @@ class Store {
 
   def printPreOrders(): Unit ={
     sortPreOrderReciepts()
-    preOrderMap.foreach(rec => rec._2.foreach(r => printReciept(r)))
+    println("HIIIIIIIII")
+    println("SIZE "+preOrderMap.size)
+    for (elem <- preOrderMap) { println("BUFFER SIZE "+elem._2.size)}
+    preOrderMap.foreach(rec => rec._2.foreach(r => println("Date: "+rec._1+ "\n" +printReciept(r))))
   }
   def allReceipts()={
 
@@ -333,9 +337,11 @@ class Store {
 
   def sortPreOrderReciepts(): Unit ={
     var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
-    dayReceiptMap.foreach(reciept => reciept._2.foreach(r => if(r.isPreOrder){
+    dayReceiptMap.foreach(reciept => reciept._2.foreach(r => if(r.isPreOrder == true){
       receiptsList+= r
     }))
+    println("hsidhashdasldaskljdaskl")
+    receiptsList.foreach(f => println("TEST"+f.id))
     try {
       receiptsList = preOrderMap(this.today)
     } catch {
@@ -465,15 +471,15 @@ object Store {
       doPrompt
     }
     def doProcessBasket: Unit = {
+      val buyingCustomer = readLine("customer id\n")
+      val customer: Customer = store.getPersonByID(buyingCustomer).asInstanceOf[Customer]
         val isUsingPoints = readLine("Is Customer Using Points to Purchase?\n Y/N\n")
-        var bool:Boolean = false
+      println("IN CLI USE POINTS IS: "+isUsingPoints)
           isUsingPoints match {
-            case y => bool = true
-            case n=>bool = false
+            case "n" =>  store.processBasket(false,customer)
+            case "y" =>  store.processBasket(true,customer)
             case _=>println("Wrong Input: Please Try Again:\n");doProcessBasket
           }
-        val buyingCustomer = readLine("customer id\n")
-        store.processBasket(bool,store.getPersonByID(buyingCustomer).asInstanceOf[Customer])
         doPrompt
     }
     def doListReceipts: Unit = {

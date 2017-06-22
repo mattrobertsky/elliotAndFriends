@@ -130,7 +130,6 @@ class StoreTestSuite extends FunSuite {
     val item2 = store.getItemByName("Lara-Croft")
     var originalL = item2.quantity
 
-//    store.sellItems(customerBasket,false, "CUS-1")
     val customer: Customer = store.getPerson("CUS-1").asInstanceOf[Customer]
     customer.addToBasket(item)
     customer.addToBasket(item2)
@@ -140,19 +139,15 @@ class StoreTestSuite extends FunSuite {
     assert(store.getItemByName("Lara-Croft").quantity == originalL-1)
   }
 
-    test("Store.deleteItems: deletes Items from a file") {
-      store.deleteItemByID("ITM1")
-      assert(!store.itemsMap.contains("ITM1"))
-    }
 
-    test("Store.addStock: adds items to the Map ") {
+    test("Store.addStock: increase item stock ") {
       val original = store.getItemByName("Monster Hunter").quantity
-      store.addStock("Monster Hunter", 100)
+      store.addStock("ITM-4", 100)
       assert(store.getItemByName("Monster Hunter").quantity == original+100)
     }
     test("Store.removeStock: removes x quantity from item") {
       val original = store.getItemByName("Monster Hunter").quantity
-      store.removeStock("Monster Hunter", 100)
+      store.removeStock("ITM-4", 100)
       assert(store.getItemByName("Monster Hunter").quantity == original-100)
     }
 
@@ -241,10 +236,10 @@ class StoreTestSuite extends FunSuite {
   }
 
   test("Store.updateItems: update Items from a file") {
-    store.updateItemCost("Monster Hunter", 50.00)
-    store.updateItemQuantity("Monster Hunter", 200)
-    store.updateItemDate("Monster Hunter", "11/06/2019")
-    store.updateItemName("Monster Hunter", "Monster-Hunter-Remastered")
+    store.updateItemCost("ITM-4", 50.00)
+    store.updateItemQuantity("ITM-4", 200)
+    store.updateItemDate("ITM-4", "11/06/2019")
+    store.updateItemName("ITM-4", "Monster-Hunter-Remastered")
 
     assert(store.getItemByName("Monster-Hunter-Remastered").quantity == 200)
     assert(store.getItemByName("Monster-Hunter-Remastered").cost == 50.00)
@@ -255,5 +250,9 @@ class StoreTestSuite extends FunSuite {
   test("List all receipt regardless of date"){
     store.allReceipts()
 
+  }
+  test("Store.deleteItems: deletes Items from a file") {
+    store.deleteItemByID("ITM1")
+    assert(!store.itemsMap.contains("ITM1"))
   }
 }
