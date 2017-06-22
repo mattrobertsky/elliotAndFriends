@@ -73,11 +73,7 @@ class Store {
   }
 
   def deletePerson(person: Person) = {
-    if(testIsManager) {
-      personMap.remove(person.id)
-    } else {
-      throw new Exception("Manager Access required")
-    }
+    personMap.remove(person.id)
   }
 
   def getPersonByID(id: String): Person ={
