@@ -422,7 +422,7 @@ object Store {
     }
     def doCreateItem(): Unit = {
       if (store.testIsManager) {
-        val date = readLine("release date (DD/MM/YYYY: \n")
+        val date = readLine("release date (DD/MM/YYYY): \n")
         val name = readLine("item name: \n")
         val cost = readLine("item cost: \n")
         val itemType = readLine("item type (game/misc/hardware: \n") // TODO future proof Alok..
