@@ -256,6 +256,7 @@ class Store {
 
   def addReciept(customerID:String, ItemList:List[Item], totalPrice:Double, thePoints:Int, newPoints:Int): Unit = {
     val reciept = new Reciept(customerID, ItemList, totalPrice, thePoints, newPoints)
+    reciept.date = today.toString()
     var receiptsList:ListBuffer[Reciept] = new ListBuffer[Reciept]()
     try {
       receiptsList = dayReceiptMap(this.today)
@@ -471,15 +472,15 @@ object Store {
     }
 
     def doTallyDay(): Unit = {
-      println(s"days earnings £${store.tallyDayEarnings(store.today)}")
+      println(s"days earnings £" + f"${store.tallyDayEarnings(store.today)}%.2f")
       doPrompt
     }
     def doTallyAllDays(): Unit = {
-      println(s"total earnings £${store.tallyAllEarnings}")
+      println(s"total earnings £" + f"${store.tallyAllEarnings}%.2f")
       doPrompt
     }
     def doForecast(): Unit = {
-      println(s"forecast earnings £${store.forecastDaysEarnings}")
+      println(s"forecast earnings £" + f"${store.forecastDaysEarnings}%.2f")
       doPrompt
     }
     def doNextDay(): Unit = {
