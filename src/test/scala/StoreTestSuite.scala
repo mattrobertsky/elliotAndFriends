@@ -210,22 +210,24 @@ class StoreTestSuite extends FunSuite {
   test("Store.calculatePoints1: calculates customer points if boolean is true") {
     val customer0: Customer = store.getPerson("CUS-1").asInstanceOf[Customer]
     val startingPoints = customer0.rewardPoints
-    println(startingPoints)
-    assert(store.calcPoints(30, "CUS-1", true) == (30-startingPoints))
+    val theOutput:List[Int] = store.calcPoints(30, "CUS-1", true)
+    assert(theOutput(0) == (30 - startingPoints))
   }
 
   test("Store.calculatePoints2: deducts customer points if customer has points"){
     val customer2: Customer = store.getPerson("CUS-1").asInstanceOf[Customer]
     val startingPoints = customer2.rewardPoints
     customer2.rewardPoints += 4
-    assert(store.calcPoints(40, "CUS-1", true) == 36)
+    val theOutput:List[Int] = store.calcPoints(40, "CUS-1", true)
+    assert(theOutput(0) == 36)
   }
 
   test("Store.calculatePoints3: deducts customer points if customer has points"){
     val customer3: Customer = store.getPerson("CUS-1").asInstanceOf[Customer]
     val startingPoints = customer3.rewardPoints
     customer3.rewardPoints += 50
-    assert(store.calcPoints(500, "CUS-1", true) == 450)
+    val theOutput:List[Int] = store.calcPoints(500, "CUS-1", true)
+    assert(theOutput(0) == 450)
   }
 
   test("Store.calculatePoints4: calculates customer points if boolean is false") {
