@@ -364,7 +364,7 @@ object Store {
         s"[1] list employees      [4] list customers     [7] create item         [10] process basket  [13] tally day \n" +
         s"[2] create employee     [5] create customer    [8] set stock           [11] list receipts   [14] total tally\n" +
         s"[3] delete employee     [6] list items         [9] add item to basket  [12] make me coffee  [15] forecast daily tally\n\n" +
-        s"[16] close/open         [17]logout\n\n")
+        s"[16] close/open         [17] logout\n\n")
 
       taskId match {
         case "1" => addElse; doListEmployees()
