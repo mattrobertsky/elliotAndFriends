@@ -458,6 +458,11 @@ object Store {
     def doProcessBasket(): Unit = {
       val buyingCustomer = readLine("customer id\n")
       val customer: Customer = store.getPersonByID(buyingCustomer).asInstanceOf[Customer]
+      customer.basket.size <= 0 match{
+        case true =>
+          println("Your basket is empty. Try adding something!\n")
+          doPrompt
+      case false =>
         val isUsingPoints = readLine("Is Customer Using Points to Purchase?\n Y/N\n")
           isUsingPoints match {
             case "n" =>  store.processBasket(usePoints = false,customer)
@@ -465,6 +470,7 @@ object Store {
             case _=>println("Wrong Input: Please Try Again:\n");doProcessBasket()
           }
         doPrompt
+      }
     }
     def doListReceipts(): Unit = {
       store.allReceipts()
